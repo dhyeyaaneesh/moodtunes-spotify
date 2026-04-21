@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MoodTunes</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --soy:#170704;--seal:#301413;--maroon:#4D1519;--derby:#594836;--board:#A1937E;
+  --board-l:#C4B5A2;--board-xl:#E2D5C8;--cream:#F5EDE6;
+  --text-p:#F5EDE6;--text-s:#C4B5A2;--text-m:#9a8272;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--soy);color:var(--text-p);min-height:100vh;overflow-x:hidden;}
+.bg-a{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 65% 55% at -5% 0%,rgba(89,72,54,0.55) 0%,transparent 55%),
+    radial-gradient(ellipse 42% 32% at 102% 5%,rgba(161,147,126,0.22) 0%,transparent 50%),
+    radial-gradient(ellipse 52% 48% at 50% 42%,rgba(77,21,25,0.45) 0%,transparent 60%),
+    radial-gradient(ellipse 48% 38% at 0% 100%,rgba(48,20,19,0.6) 0%,transparent 55%),
+    radial-gradient(ellipse 42% 42% at 106% 96%,rgba(89,72,54,0.38) 0%,transparent 55%);}
+.blob{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(72px);animation:floatB ease-in-out infinite;}
+.b1{width:380px;height:380px;top:-70px;right:-110px;background:radial-gradient(circle,rgba(161,147,126,0.28) 0%,transparent 70%);animation-duration:11s;}
+.b2{width:270px;height:270px;top:30%;left:-85px;background:radial-gradient(circle,rgba(89,72,54,0.3) 0%,transparent 70%);animation-duration:8s;animation-delay:2s;}
+.b3{width:310px;height:310px;top:48%;right:4%;background:radial-gradient(circle,rgba(77,21,25,0.32) 0%,transparent 70%);animation-duration:13s;animation-delay:1s;}
+.b4{width:240px;height:240px;bottom:4%;left:22%;background:radial-gradient(circle,rgba(161,147,126,0.13) 0%,transparent 70%);animation-duration:9s;animation-delay:4s;}
+.b5{width:190px;height:190px;bottom:-45px;right:14%;background:radial-gradient(circle,rgba(48,20,19,0.48) 0%,transparent 70%);animation-duration:7s;animation-delay:6s;}
+@keyframes floatB{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-14px) scale(1.02)}}
+.page{position:relative;z-index:1;}
+@keyframes pageIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideU{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes rowIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}}
+@keyframes shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
+@keyframes boardPop{0%{box-shadow:0 0 0 0 rgba(161,147,126,0.5)}70%{box-shadow:0 0 0 9px rgba(161,147,126,0)}100%{box-shadow:0 0 0 0 rgba(161,147,126,0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes featIn{from{opacity:0;transform:scale(0.94)}to{opacity:1;transform:scale(1)}}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:.9rem 2.5rem;background:rgba(23,7,4,0.82);backdrop-filter:blur(26px);border-bottom:1px solid rgba(89,72,54,0.38);}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;letter-spacing:.05em;background:linear-gradient(90deg,var(--board),var(--board-l),#ddd0bf,var(--board-l),var(--board));background-size:280% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 7s linear infinite;}
+.nav-logo em{font-style:italic;}
+.nav-actions{display:flex;gap:.6rem;align-items:center;}
+.btn{font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;padding:.45rem 1rem;border-radius:100px;border:none;cursor:pointer;transition:all .22s;letter-spacing:.03em;}
+.btn-ghost{background:transparent;border:1px solid rgba(89,72,54,0.52);color:var(--board);}
+.btn-ghost:hover{background:rgba(89,72,54,0.22);color:var(--board-l);border-color:var(--board);}
+.avatar-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--board);background:var(--seal);cursor:pointer;overflow:hidden;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;color:var(--board-l);transition:all .2s;}
+.avatar-btn:hover{border-color:var(--board-l);transform:scale(1.08);}
+.avatar-btn img{width:100%;height:100%;object-fit:cover;}
+
+/* AUTH */
+#auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:6rem 1.5rem 3rem;}
+.auth-wrap{width:100%;max-width:420px;animation:pageIn .65s cubic-bezier(.22,1,.36,1) both;}
+.auth-eye{text-align:center;margin-bottom:2rem;}
+.auth-eye h1{font-family:'Cormorant Garamond',serif;font-size:3.2rem;font-weight:400;letter-spacing:.06em;line-height:1.05;color:var(--board-l);}
+.auth-eye h1 em{font-style:italic;color:var(--board);}
+.auth-eye p{color:var(--text-m);font-size:.82rem;margin-top:.5rem;letter-spacing:.06em;}
+.auth-card{background:rgba(89,72,54,0.18);backdrop-filter:blur(32px);border:1px solid rgba(161,147,126,0.2);border-top:1px solid rgba(161,147,126,0.38);border-radius:22px;padding:2rem 2.2rem 2.4rem;box-shadow:0 40px 80px rgba(0,0,0,.55),inset 0 1px 0 rgba(196,181,162,.1);}
+.auth-tabs{display:flex;background:rgba(77,21,25,0.45);border-radius:11px;padding:3px;margin-bottom:1.6rem;}
+.auth-tab{flex:1;padding:.55rem;border:none;background:transparent;color:var(--text-m);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;border-radius:9px;cursor:pointer;transition:all .22s;}
+.auth-tab.active{background:var(--board);color:var(--soy);font-weight:700;box-shadow:0 2px 12px rgba(161,147,126,.32);}
+.form-group{margin-bottom:1rem;}
+.form-group label{display:block;font-size:.67rem;font-weight:600;color:var(--board);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.38rem;}
+.form-group input{width:100%;padding:.65rem 1rem;background:rgba(48,20,19,0.55);border:1px solid rgba(89,72,54,0.4);border-radius:9px;color:var(--text-p);font-family:'DM Sans',sans-serif;font-size:.88rem;transition:all .2s;outline:none;}
+.form-group input:focus{border-color:var(--board);background:rgba(48,20,19,.75);box-shadow:0 0 0 3px rgba(161,147,126,.14);}
+.form-group input::placeholder{color:var(--text-m);opacity:.5;}
+.auth-submit{width:100%;padding:.82rem;background:var(--board);color:var(--soy);font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;border:none;border-radius:11px;cursor:pointer;transition:all .22s;margin-top:.4rem;letter-spacing:.03em;}
+.auth-submit:hover{background:var(--board-l);transform:translateY(-2px);box-shadow:0 12px 32px rgba(161,147,126,.3);}
+.auth-err{background:rgba(77,21,25,.55);border:1px solid rgba(161,147,126,.2);color:var(--board-l);padding:.55rem .9rem;border-radius:8px;font-size:.8rem;margin-bottom:1rem;display:none;}
+
+/* MOOD PAGE */
+#mood-page{min-height:100vh;padding:5rem 1.5rem 3rem;}
+.mood-hero{text-align:center;padding:2.8rem 0 2.2rem;animation:pageIn .65s cubic-bezier(.22,1,.36,1) both;}
+.live-tag{display:inline-flex;align-items:center;gap:7px;background:rgba(89,72,54,0.22);border:1px solid rgba(89,72,54,0.52);border-radius:100px;padding:.3rem 1rem;font-size:.7rem;color:var(--board-l);margin-bottom:1.4rem;letter-spacing:.07em;text-transform:uppercase;}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--board);animation:pulse 2.4s infinite;}
+.user-handle{font-size:.72rem;font-weight:600;color:var(--board);text-transform:uppercase;letter-spacing:.16em;margin-bottom:.5rem;}
+.accent-line{width:72px;height:2px;margin:0 auto 1.5rem;border-radius:2px;background:linear-gradient(90deg,var(--seal),var(--maroon),var(--derby),var(--board),var(--board-l));}
+.mood-hero h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2.3rem,5.5vw,3.8rem);font-weight:400;line-height:1.1;color:var(--text-p);margin-bottom:.6rem;}
+.mood-hero h2 em{font-style:italic;color:var(--board-l);}
+.mood-hero p{color:var(--text-m);font-size:.87rem;letter-spacing:.04em;}
+.moods-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:.8rem;max-width:840px;margin:0 auto 2rem;}
+.mood-chip{display:flex;flex-direction:column;align-items:center;gap:.48rem;padding:1.4rem .8rem 1.2rem;background:rgba(48,20,19,0.65);border:1px solid rgba(89,72,54,0.22);border-radius:16px;cursor:pointer;transition:all .32s cubic-bezier(.34,1.56,.64,1);backdrop-filter:blur(12px);position:relative;overflow:hidden;}
+.mood-chip::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(161,147,126,0),transparent);transition:background .3s;}
+.mood-chip::after{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(160deg,rgba(89,72,54,0.2) 0%,transparent 60%);opacity:0;transition:opacity .3s;}
+.mood-chip:hover{transform:translateY(-6px) scale(1.02);border-color:rgba(161,147,126,0.35);background:rgba(89,72,54,0.2);box-shadow:0 8px 24px rgba(89,72,54,.16);}
+.mood-chip:hover::before{background:linear-gradient(90deg,transparent,rgba(161,147,126,0.25),transparent);}
+.mood-chip:hover::after{opacity:1;}
+.mood-chip.selected{background:rgba(89,72,54,0.26);border-color:var(--board);transform:translateY(-5px) scale(1.02);box-shadow:0 10px 32px rgba(161,147,126,.2),inset 0 1px 0 rgba(196,181,162,.1);}
+.mood-chip.selected::after{opacity:1;}
+.mood-icon{font-size:1.85rem;}
+.mood-label{font-size:.73rem;font-weight:500;color:var(--board);text-align:center;}
+.mood-chip.selected .mood-label{color:var(--board-l);}
+
+/* GENRE STEP */
+#genre-step{max-width:840px;margin:0 auto;animation:slideU .45s cubic-bezier(.22,1,.36,1) both;}
+.step-div{display:flex;align-items:center;gap:1rem;margin:.2rem auto 1.5rem;color:var(--board);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;}
+.step-div::before,.step-div::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(161,147,126,0.32),transparent);}
+.genre-hd{text-align:center;margin-bottom:1.1rem;}
+.genre-hd h3{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;color:var(--text-s);letter-spacing:.03em;}
+.genre-hd h3 em{font-style:italic;color:var(--board-l);}
+.genre-ct{font-size:.7rem;margin-top:.3rem;letter-spacing:.09em;}
+.ct-0{color:var(--text-m)}.ct-1{color:var(--derby)}.ct-2{color:var(--board)}.ct-3{color:var(--board-l);}
+.genres-row{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:center;margin-bottom:1.8rem;}
+.genre-chip{padding:.52rem 1.2rem;background:rgba(77,21,25,0.28);border:1px solid rgba(77,21,25,0.55);border-radius:100px;font-size:.79rem;font-weight:500;color:var(--board);cursor:pointer;transition:all .24s;font-family:'DM Sans',sans-serif;}
+.genre-chip:hover:not(.maxed){border-color:rgba(89,72,54,0.72);color:var(--board-l);transform:translateY(-2px);background:rgba(89,72,54,0.18);}
+.genre-chip.selected{background:var(--board);border-color:var(--board);color:var(--soy);font-weight:600;box-shadow:0 4px 18px rgba(161,147,126,.3);animation:boardPop .35s ease;}
+.genre-chip.maxed:not(.selected){opacity:.28;cursor:not-allowed;}
+.cta-row{display:flex;justify-content:center;}
+.cta-btn{padding:.9rem 2.8rem;background:var(--board);color:var(--soy);font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:700;border:none;border-radius:100px;cursor:pointer;transition:all .26s;letter-spacing:.04em;}
+.cta-btn:hover:not(:disabled){background:var(--board-l);transform:translateY(-3px);box-shadow:0 16px 40px rgba(161,147,126,.32);}
+.cta-btn:disabled{opacity:.25;cursor:not-allowed;}
+
+/* SONGS PAGE */
+#songs-page{min-height:100vh;padding:5rem 1.5rem 3rem;}
+.songs-top{max-width:920px;margin:0 auto;padding:2rem 0 1rem;}
+.back-btn{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--board);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:color .2s;padding:0;margin-bottom:1.5rem;letter-spacing:.08em;text-transform:uppercase;}
+.back-btn:hover{color:var(--board-l);}
+.songs-hdr{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:.6rem;padding-bottom:1.2rem;border-bottom:1px solid rgba(89,72,54,0.38);}
+.songs-hdr-l h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.7rem,4vw,2.6rem);font-weight:400;line-height:1.15;color:var(--text-p);}
+.songs-hdr-l h2 em{font-style:italic;color:var(--board-l);}
+.songs-hdr-l p{color:var(--text-m);font-size:.78rem;margin-top:.25rem;letter-spacing:.04em;}
+.songs-n{font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:300;color:rgba(161,147,126,0.16);line-height:1;flex-shrink:0;}
+.gpills{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.4rem;}
+.gp0{background:rgba(161,147,126,0.18);border:1px solid rgba(161,147,126,0.44);color:var(--board-l);}
+.gp1{background:rgba(89,72,54,0.25);border:1px solid rgba(89,72,54,0.56);color:#d4b896;}
+.gp2{background:rgba(77,21,25,0.35);border:1px solid rgba(120,45,50,0.58);color:#e0b0b5;}
+.gpill{font-size:.67rem;font-weight:600;padding:3px 11px;border-radius:100px;letter-spacing:.06em;}
+.source-badge{font-size:.6rem;padding:2px 7px;border-radius:100px;background:rgba(161,147,126,0.1);border:1px solid rgba(161,147,126,0.2);color:rgba(161,147,126,0.6);margin-left:4px;letter-spacing:.04em;}
+.songs-list{max-width:920px;margin:0 auto;display:flex;flex-direction:column;}
+.song-row{display:grid;grid-template-columns:2.8rem 1fr auto;align-items:center;gap:1rem;padding:1.05rem .8rem;border-bottom:1px solid rgba(89,72,54,0.18);cursor:pointer;transition:all .2s;border-radius:8px;position:relative;overflow:hidden;animation:rowIn .5s cubic-bezier(.22,1,.36,1) both;}
+.song-row:nth-child(odd){background:rgba(48,20,19,0.2);}
+.song-row:nth-child(even){background:rgba(89,72,54,0.08);}
+.song-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--board-l),var(--board),var(--derby));opacity:0;transition:opacity .2s;border-radius:4px 0 0 4px;}
+.song-row:hover{background:rgba(89,72,54,0.14);}
+.song-row:hover::before{opacity:1;}
+.song-num{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:300;color:rgba(161,147,126,0.28);text-align:center;transition:all .2s;}
+.play-icon{display:none;text-align:center;font-size:.7rem;color:var(--board-l);}
+.song-row:hover .song-num{display:none;}
+.song-row:hover .play-icon{display:block;}
+.song-info{min-width:0;}
+.song-title{font-size:.9rem;font-weight:500;color:var(--text-p);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.18rem;transition:color .2s;}
+.song-row:hover .song-title{color:var(--board-l);}
+.song-artist{font-size:.76rem;color:var(--text-m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.song-right{display:flex;align-items:center;gap:.7rem;flex-shrink:0;}
+.song-genre{font-size:.63rem;font-weight:600;padding:3px 10px;border-radius:100px;white-space:nowrap;letter-spacing:.04em;}
+.song-bpm{font-family:'Cormorant Garamond',serif;font-size:.88rem;color:rgba(161,147,126,0.3);min-width:48px;text-align:right;}
+.ext-btn{width:28px;height:28px;border-radius:50%;border:1px solid rgba(89,72,54,0.45);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;}
+.ext-btn:hover{border-color:var(--board);background:rgba(161,147,126,0.1);}
+.ext-btn svg{width:10px;height:10px;}
+.song-row:nth-child(1){animation-delay:.03s}.song-row:nth-child(2){animation-delay:.07s}.song-row:nth-child(3){animation-delay:.11s}
+.song-row:nth-child(4){animation-delay:.15s}.song-row:nth-child(5){animation-delay:.19s}.song-row:nth-child(6){animation-delay:.23s}
+.song-row:nth-child(7){animation-delay:.27s}.song-row:nth-child(8){animation-delay:.31s}.song-row:nth-child(9){animation-delay:.35s}
+.song-row:nth-child(10){animation-delay:.39s}.song-row:nth-child(11){animation-delay:.43s}.song-row:nth-child(12){animation-delay:.47s}
+.song-row:nth-child(13){animation-delay:.51s}.song-row:nth-child(14){animation-delay:.55s}.song-row:nth-child(15){animation-delay:.59s}
+
+/* ANALYZER PAGE */
+#analyzer-page{min-height:100vh;padding:5rem 1.5rem 3rem;}
+.analyzer-wrap{max-width:720px;margin:0 auto;padding-top:2rem;}
+.analyzer-hero{text-align:center;padding:2rem 0 2.5rem;animation:pageIn .65s cubic-bezier(.22,1,.36,1) both;}
+.analyzer-hero h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:400;color:var(--text-p);margin-bottom:.5rem;}
+.analyzer-hero h2 em{font-style:italic;color:var(--board-l);}
+.analyzer-hero p{color:var(--text-m);font-size:.87rem;letter-spacing:.03em;}
+
+/* Spotify setup card */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Search bar */
+.search-bar{display:flex;gap:.6rem;margin-bottom:1.5rem;}
+.search-bar input{flex:1;padding:.75rem 1.1rem;background:rgba(48,20,19,0.55);border:1px solid rgba(89,72,54,0.4);border-radius:12px;color:var(--text-p);font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:all .2s;}
+.search-bar input:focus{border-color:var(--board);box-shadow:0 0 0 3px rgba(161,147,126,.14);}
+.search-bar input::placeholder{color:var(--text-m);opacity:.5;}
+.search-btn{padding:.75rem 1.4rem;background:var(--board);color:var(--soy);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;border:none;border-radius:12px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.search-btn:hover{background:var(--board-l);}
+.search-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* Search results dropdown */
+.search-results{background:rgba(48,20,19,0.9);border:1px solid rgba(89,72,54,0.45);border-radius:12px;overflow:hidden;backdrop-filter:blur(20px);margin-bottom:1rem;}
+.result-item{display:flex;align-items:center;gap:.9rem;padding:.75rem 1rem;cursor:pointer;transition:background .18s;border-bottom:1px solid rgba(89,72,54,0.18);}
+.result-item:last-child{border-bottom:none;}
+.result-item:hover{background:rgba(89,72,54,0.2);}
+.result-art{width:40px;height:40px;border-radius:6px;background:var(--seal);flex-shrink:0;overflow:hidden;}
+.result-art img{width:100%;height:100%;object-fit:cover;}
+.result-info{min-width:0;flex:1;}
+.result-name{font-size:.87rem;font-weight:500;color:var(--text-p);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.result-artist{font-size:.74rem;color:var(--text-m);}
+
+/* Analysis card */
+.analysis-card{background:rgba(89,72,54,0.14);border:1px solid rgba(161,147,126,0.18);border-top:1px solid rgba(161,147,126,0.32);border-radius:20px;overflow:hidden;backdrop-filter:blur(16px);animation:featIn .5s ease both;}
+.analysis-header{padding:1.4rem 1.5rem 1rem;border-bottom:1px solid rgba(89,72,54,0.25);}
+.analysis-track{min-width:0;}
+.analysis-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:var(--text-p);margin-bottom:.15rem;}
+.analysis-artist{font-size:.82rem;color:var(--board);}
+.analysis-body{padding:1.5rem;}
+/* Mood result */
+.mood-result{display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;background:rgba(48,20,19,0.5);border-radius:14px;margin-bottom:1.25rem;border:1px solid rgba(89,72,54,0.3);}
+.mood-result-icon{font-size:2rem;flex-shrink:0;}
+.mood-result-text h3{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;color:var(--board-l);}
+.mood-result-text p{font-size:.78rem;color:var(--text-m);margin-top:.15rem;line-height:1.5;}
+/* Feature bars */
+.features-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem;}
+.feat-bar-wrap{background:rgba(48,20,19,0.4);border-radius:10px;padding:.75rem 1rem;border:1px solid rgba(89,72,54,0.22);}
+.feat-label{display:flex;justify-content:space-between;margin-bottom:.45rem;}
+.feat-name{font-size:.7rem;font-weight:600;color:var(--text-m);text-transform:uppercase;letter-spacing:.08em;}
+.feat-val{font-family:'Cormorant Garamond',serif;font-size:.9rem;color:var(--board-l);}
+.feat-track{height:4px;background:rgba(89,72,54,0.3);border-radius:4px;overflow:hidden;}
+.feat-fill{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.22,1,.36,1);}
+.f-val{background:linear-gradient(90deg,var(--derby),var(--board));}
+.f-ene{background:linear-gradient(90deg,var(--maroon),#8b3040);}
+.f-dan{background:linear-gradient(90deg,var(--derby),#9ca576);}
+.f-ins{background:linear-gradient(90deg,var(--seal),var(--derby));}
+.feat-raw{margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(89,72,54,0.25);display:flex;flex-wrap:wrap;gap:.5rem;}
+.feat-pill{font-size:.68rem;padding:3px 10px;border-radius:100px;background:rgba(77,21,25,0.3);border:1px solid rgba(77,21,25,0.5);color:var(--board);}
+/* Spinner */
+.spinner-wrap{display:flex;align-items:center;justify-content:center;gap:.75rem;padding:2.5rem;color:var(--text-m);font-size:.85rem;}
+.spinner{width:20px;height:20px;border:2px solid rgba(161,147,126,0.2);border-top-color:var(--board);border-radius:50%;animation:spin .75s linear infinite;}
+/* No-creds notice */
+.no-creds{text-align:center;padding:2rem;background:rgba(77,21,25,0.18);border:1px solid rgba(77,21,25,0.35);border-radius:14px;color:var(--text-m);font-size:.85rem;line-height:1.7;}
+.no-creds strong{color:var(--board);}
+
+/* PROFILE */
+#profile-page{min-height:100vh;display:flex;justify-content:center;padding:5rem 1.5rem 3rem;}
+.prof-wrap{width:100%;max-width:520px;padding-top:2rem;}
+.prof-card{background:rgba(89,72,54,0.14);border:1px solid rgba(161,147,126,0.18);border-top:1px solid rgba(161,147,126,0.34);border-radius:24px;overflow:hidden;backdrop-filter:blur(20px);box-shadow:0 36px 72px rgba(0,0,0,.5),inset 0 1px 0 rgba(196,181,162,.08);}
+.prof-banner{height:120px;position:relative;background:linear-gradient(130deg,var(--soy) 0%,var(--seal) 18%,var(--maroon) 38%,var(--derby) 62%,var(--board) 85%,var(--board-l) 100%);}
+.prof-banner::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-48deg,transparent,transparent 18px,rgba(161,147,126,0.05) 18px,rgba(161,147,126,0.05) 19px);}
+.prof-av-wrap{position:absolute;bottom:-38px;left:1.75rem;}
+.prof-av{width:76px;height:76px;border-radius:50%;border:3px solid var(--soy);background:var(--seal);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:500;color:var(--board-l);overflow:hidden;cursor:pointer;position:relative;}
+.prof-av:hover .av-ov{opacity:1;}
+.av-ov{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-size:.55rem;font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:.1em;color:#fff;opacity:0;transition:opacity .2s;border-radius:50%;}
+.prof-av img{width:100%;height:100%;object-fit:cover;}
+.prof-body{padding:3.2rem 1.75rem 1.75rem;}
+.prof-name{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:400;color:var(--text-p);}
+.prof-sub{font-size:.76rem;color:var(--text-m);margin-bottom:1.5rem;letter-spacing:.03em;}
+.prof-fields{display:flex;flex-direction:column;gap:1rem;}
+.prof-fields label{display:block;font-size:.67rem;font-weight:600;color:var(--board);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.35rem;}
+.prof-fields input,.prof-fields textarea{width:100%;padding:.62rem 1rem;background:rgba(89,72,54,0.15);border:1px solid rgba(89,72,54,0.38);border-radius:9px;color:var(--text-p);font-family:'DM Sans',sans-serif;font-size:.88rem;transition:all .2s;outline:none;resize:vertical;}
+.prof-fields input:focus,.prof-fields textarea:focus{border-color:var(--board);box-shadow:0 0 0 3px rgba(161,147,126,.14);}
+.prof-fields textarea{min-height:76px;}
+.prof-actions{display:flex;gap:.75rem;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid rgba(89,72,54,0.3);}
+.prof-save{flex:1;padding:.72rem;background:var(--board);color:var(--soy);font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:700;border:none;border-radius:9px;cursor:pointer;transition:all .2s;}
+.prof-save:hover{background:var(--board-l);transform:translateY(-1px);}
+.prof-logout{padding:.72rem 1.2rem;background:rgba(77,21,25,0.2);color:rgba(196,181,162,.55);font-family:'DM Sans',sans-serif;font-size:.88rem;border:1px solid rgba(77,21,25,0.45);border-radius:9px;cursor:pointer;transition:all .2s;}
+.prof-logout:hover{background:rgba(77,21,25,.4);color:var(--board-l);}
+
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(89,72,54,0.93);border:1px solid var(--board);color:var(--board-xl);padding:.65rem 1.5rem;border-radius:100px;font-size:.8rem;font-weight:500;z-index:999;transition:transform .4s cubic-bezier(.34,1.56,.64,1);backdrop-filter:blur(16px);letter-spacing:.05em;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.multi-notice{font-size:.82rem;color:var(--board-l);margin-bottom:.75rem;padding:.6rem 1rem;background:rgba(89,72,54,0.18);border:1px solid rgba(161,147,126,0.18);border-radius:10px;letter-spacing:.02em;}
+.multi-notice strong{color:var(--board);}.multi-notice em{font-style:italic;color:var(--board-l);}
+/* ── Spotify Setup Card ── */
+.spotify-setup{background:rgba(89,72,54,0.18);backdrop-filter:blur(20px);border:1px solid rgba(161,147,126,0.2);border-top:1px solid rgba(161,147,126,0.35);border-radius:18px;padding:1.5rem 1.75rem 1.6rem;margin-bottom:1.4rem;}
+.spotify-setup h4{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--board-l);margin-bottom:.5rem;letter-spacing:.02em;}
+.spotify-setup p{font-size:.8rem;color:var(--text-m);margin-bottom:1.1rem;line-height:1.65;}
+.spotify-setup p a{color:var(--board);text-decoration:none;border-bottom:1px solid rgba(161,147,126,0.3);}
+.spotify-setup p a:hover{color:var(--board-l);}
+.spotify-setup p strong{color:var(--board-l);font-weight:600;background:rgba(48,20,19,0.6);padding:1px 6px;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:.75rem;letter-spacing:.04em;}
+.spotify-save-btn{padding:.6rem 1.4rem;background:var(--board);color:var(--soy);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:700;border:none;border-radius:100px;cursor:pointer;transition:all .22s;white-space:nowrap;letter-spacing:.03em;}
+.spotify-save-btn:hover{background:var(--board-l);box-shadow:0 6px 20px rgba(161,147,126,.25);}
+#sp-setup-err{background:rgba(77,21,25,.4);border:1px solid rgba(161,147,126,.2);color:var(--board-l);padding:.45rem .8rem;border-radius:8px;font-size:.78rem;margin-bottom:.75rem;display:none;}
+#sp-client-id:focus{border-color:var(--board)!important;background:rgba(48,20,19,.75)!important;box-shadow:0 0 0 3px rgba(161,147,126,.12)!important;outline:none;}
+/* ── Analyzer body ── */
+.analyzer-wrap{max-width:720px;margin:0 auto;padding-top:2rem;}
+.analyzer-hero{text-align:center;padding:2rem 0 2.5rem;animation:pageIn .65s cubic-bezier(.22,1,.36,1) both;}
+.analyzer-hero h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:400;color:var(--text-p);margin-bottom:.5rem;}
+.analyzer-hero h2 em{font-style:italic;color:var(--board-l);}
+.analyzer-hero p{color:var(--text-m);font-size:.87rem;letter-spacing:.03em;}
+/* Search bar */
+.search-bar{display:flex;gap:.6rem;margin-bottom:1.5rem;}
+.search-bar input{flex:1;padding:.75rem 1.1rem;background:rgba(48,20,19,0.55);border:1px solid rgba(89,72,54,0.4);border-radius:12px;color:var(--text-p);font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:all .2s;}
+.search-bar input:focus{border-color:var(--board);box-shadow:0 0 0 3px rgba(161,147,126,.14);}
+.search-bar input::placeholder{color:var(--text-m);opacity:.5;}
+.search-btn{padding:.75rem 1.4rem;background:var(--board);color:var(--soy);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;border:none;border-radius:12px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.search-btn:hover{background:var(--board-l);}
+.search-btn:disabled{opacity:.4;cursor:not-allowed;}
+/* Search results */
+.search-results{background:rgba(48,20,19,0.85);border:1px solid rgba(89,72,54,0.45);border-radius:14px;overflow:hidden;backdrop-filter:blur(20px);margin-bottom:1rem;}
+.result-item{display:flex;align-items:center;gap:.9rem;padding:.8rem 1rem;cursor:pointer;transition:background .18s;border-bottom:1px solid rgba(89,72,54,0.2);}
+.result-item:last-child{border-bottom:none;}
+.result-item:hover{background:rgba(89,72,54,0.2);}
+.result-art{width:42px;height:42px;border-radius:7px;background:rgba(89,72,54,0.3);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--board);}
+.result-art img{width:100%;height:100%;object-fit:cover;}
+.result-info{min-width:0;flex:1;}
+.result-name{font-size:.88rem;font-weight:500;color:var(--text-p);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.result-artist{font-size:.74rem;color:var(--text-m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* Analysis card */
+.analysis-card{background:rgba(89,72,54,0.14);border:1px solid rgba(161,147,126,0.18);border-top:1px solid rgba(161,147,126,0.32);border-radius:20px;overflow:hidden;backdrop-filter:blur(16px);animation:featIn .5s ease both;}
+@keyframes featIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
+.analysis-header{padding:1.4rem 1.5rem 1rem;border-bottom:1px solid rgba(89,72,54,0.25);}
+.analysis-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:var(--text-p);margin-bottom:.15rem;}
+.analysis-artist{font-size:.82rem;color:var(--board);}
+.analysis-body{padding:1.4rem;}
+.mood-result{display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;background:rgba(48,20,19,0.5);border-radius:14px;margin-bottom:1.25rem;border:1px solid rgba(89,72,54,0.3);}
+.mood-result-icon{font-size:2rem;flex-shrink:0;}
+.mood-result-text h3{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;color:var(--board-l);}
+.mood-result-text p{font-size:.78rem;color:var(--text-m);margin-top:.15rem;line-height:1.5;}
+.features-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem;}
+.feat-bar-wrap{background:rgba(48,20,19,0.4);border-radius:10px;padding:.75rem 1rem;border:1px solid rgba(89,72,54,0.22);}
+.feat-label{display:flex;justify-content:space-between;margin-bottom:.45rem;}
+.feat-name{font-size:.7rem;font-weight:600;color:var(--text-m);text-transform:uppercase;letter-spacing:.08em;}
+.feat-val{font-family:'Cormorant Garamond',serif;font-size:.9rem;color:var(--board-l);}
+.feat-track{height:4px;background:rgba(89,72,54,0.3);border-radius:4px;overflow:hidden;}
+.feat-fill{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.22,1,.36,1);}
+.f-val{background:linear-gradient(90deg,var(--derby),var(--board));}
+.f-ene{background:linear-gradient(90deg,var(--maroon),#8b3040);}
+.f-dan{background:linear-gradient(90deg,var(--derby),#9ca576);}
+.f-ins{background:linear-gradient(90deg,var(--seal),var(--derby));}
+.feat-raw{margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.45rem;}
+.feat-pill{font-size:.68rem;padding:3px 10px;border-radius:100px;background:rgba(77,21,25,0.3);border:1px solid rgba(77,21,25,0.5);color:var(--board);}
+.spinner-wrap{display:flex;align-items:center;justify-content:center;gap:.75rem;padding:2.5rem;color:var(--text-m);font-size:.85rem;}
+.spinner{width:20px;height:20px;border:2px solid rgba(161,147,126,0.2);border-top-color:var(--board);border-radius:50%;animation:spin .75s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.no-creds{text-align:center;padding:1.5rem;background:rgba(77,21,25,0.18);border:1px solid rgba(77,21,25,0.35);border-radius:14px;color:var(--text-m);font-size:.85rem;line-height:1.7;}
+.no-creds strong{color:var(--board);}
+.hidden{display:none!important;}
+#connected-bar{display:flex;}
+#avatar-input{display:none;}
+@media(max-width:600px){.features-grid{grid-template-columns:1fr;}.song-bpm{display:none;}}
+</style>
+</head>
+<body>
+<div class="bg-a"></div>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div><div class="blob b5"></div>
+
+<nav id="nav"><div class="nav-logo">Mood<em>Tunes</em></div><div class="nav-actions" id="nav-actions"></div></nav>
+
+<!-- AUTH -->
+<div id="auth-page" class="page">
+  <div class="auth-wrap">
+    <div class="auth-eye"><h1>Mood<em>Tunes</em></h1><p>music curated for every feeling</p></div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-l" onclick="switchTab('l')">Log in</button>
+        <button class="auth-tab" id="tab-s" onclick="switchTab('s')">Sign up</button>
+      </div>
+      <div id="auth-err" class="auth-err"></div>
+      <div id="lform">
+        <div class="form-group"><label>Username</label><input type="text" id="lu" placeholder="your_username" autocomplete="username"></div>
+        <div class="form-group"><label>Password</label><input type="password" id="lp" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="current-password"></div>
+        <button class="auth-submit" onclick="doLogin()">Continue &#8594;</button>
+      </div>
+      <div id="sform" class="hidden">
+        <div class="form-group"><label>Email</label><input type="email" id="se" placeholder="you@email.com" autocomplete="email"></div>
+        <div class="form-group"><label>Username</label><input type="text" id="su" placeholder="choose_a_handle" autocomplete="username"></div>
+        <div class="form-group"><label>Password</label><input type="password" id="sp" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="new-password"></div>
+        <button class="auth-submit" onclick="doSignup()">Create account &#8594;</button>
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:1.2rem;font-size:.72rem;color:var(--text-m);">By signing up you agree to our <button onclick="showPage('privacy')" style="background:none;border:none;color:var(--board);cursor:pointer;font-size:inherit;text-decoration:underline;font-family:inherit;">Privacy Policy</button></p>
+  </div>
+</div>
+
+<!-- MOOD -->
+<div id="mood-page" class="page hidden">
+  <div class="mood-hero">
+    <div class="live-tag"><div class="dot"></div><span id="gtime">Good evening</span></div>
+    <div class="user-handle" id="uhandle"></div>
+    <div class="accent-line"></div>
+    <h2>How are you <em>feeling</em><br>right now?</h2>
+    <p>Pick your mood &#183; choose up to 3 genres &#183; discover your songs</p>
+  </div>
+  <div class="moods-grid" id="moods-grid"></div>
+  <div id="genre-step" class="hidden">
+    <div class="step-div">then choose your sound</div>
+    <div class="genre-hd">
+      <h3>Pick up to <em>3 genres</em> you're vibing with</h3>
+      <div class="genre-ct ct-0" id="gct">0 of 3 selected</div>
+    </div>
+    <div class="genres-row" id="genres-row"></div>
+    <div class="cta-row"><button class="cta-btn" id="find-btn" onclick="loadSongs()" disabled>Find my songs &#8594;</button></div>
+  </div>
+</div>
+
+<!-- SONGS -->
+<div id="songs-page" class="page hidden">
+  <div class="songs-top">
+    <button class="back-btn" onclick="showPage('mood')">&#8592; change mood</button>
+    <div class="songs-hdr">
+      <div class="songs-hdr-l">
+        <h2 id="shd">Songs for your <em>mood</em></h2>
+        <p id="ssub">tracks curated for you</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:.75rem">
+        <div class="songs-n" id="snum">0</div>
+        <button class="btn btn-ghost" onclick="loadSongs()">Shuffle &#8635;</button>
+      </div>
+    </div>
+    <div class="gpills" id="gpills"></div>
+  </div>
+  <div class="songs-list" id="songs-list"></div>
+</div>
+
+<!-- ANALYZER -->
+<div id="analyzer-page" class="page hidden">
+  <div class="analyzer-wrap">
+    <div class="analyzer-hero">
+      <h2>What <em>mood</em> is your song?</h2>
+      <p>Search any song &#183; real audio features &#183; instant mood analysis</p>
+    </div>
+
+    <!-- Setup card — only shown when not connected -->
+    <div class="spotify-setup" id="sp-setup">
+      <h4 style="margin-bottom:.6rem;">Connect Spotify</h4>
+      <p style="margin-bottom:1rem;">Connect your Spotify account to analyse any song and discover its mood.</p>
+      <button class="spotify-save-btn" onclick="initiateSpotifyLogin()">Login with Spotify &#8594;</button>
+    </div>
+
+    <!-- Connected bar -->
+    <div id="connected-bar" class="hidden" style="display:flex;align-items:center;justify-content:space-between;background:rgba(89,72,54,0.15);border:1px solid rgba(161,147,126,0.2);border-radius:12px;padding:.6rem 1rem;margin-bottom:1.2rem;font-size:.8rem;">
+      <span style="color:var(--board-l);">&#10003; Spotify connected &nbsp;<span style="color:var(--text-m);font-size:.75rem;" id="sp-connected-id"></span></span>
+      <button onclick="disconnectSpotify()" style="background:none;border:none;color:var(--text-m);cursor:pointer;font-size:.75rem;font-family:DM Sans,sans-serif;">Disconnect</button>
+    </div>
+
+    <div id="analyzer-body" class="hidden">
+      <div class="search-bar">
+        <input type="text" id="az-query" placeholder="Search any song&#8230;" onkeydown="if(event.key==='Enter')doSearch()">
+        <button class="search-btn" id="az-btn" onclick="doSearch()">Analyse</button>
+      </div>
+      <div id="az-results"></div>
+      <div id="az-output"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div id="profile-page" class="page hidden">
+  <div class="prof-wrap">
+    <button class="back-btn" onclick="showPage('mood')" style="margin-bottom:1.2rem">&#8592; back to moods</button>
+    <div class="prof-card">
+      <div class="prof-banner">
+        <div class="prof-av-wrap">
+          <div class="prof-av" id="pav" onclick="document.getElementById('avatar-input').click()">
+            <span id="av-ini"></span><div class="av-ov">CHANGE</div>
+          </div>
+          <input type="file" id="avatar-input" accept="image/*" onchange="handleAv(this)">
+        </div>
+      </div>
+      <div class="prof-body">
+        <div class="prof-name" id="pname"></div>
+        <div class="prof-sub" id="psub"></div>
+        <div class="prof-fields">
+          <div><label>Username</label><input type="text" id="pu"></div>
+          <div><label>Email</label><input type="email" id="pe"></div>
+          <div><label>Bio</label><textarea id="pb" placeholder="say something about yourself&#8230;"></textarea></div>
+        </div>
+        <div class="prof-actions">
+          <button class="prof-save" onclick="saveProf()">Save changes</button>
+          <button class="prof-logout" onclick="doLogout()">Log out</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- PRIVACY POLICY -->
+<div id="privacy-page" class="page hidden">
+  <div style="max-width:720px;margin:0 auto;padding:6rem 1.5rem 4rem;">
+    <button class="back-btn" onclick="showPage('mood')" style="margin-bottom:2rem">&#8592; back</button>
+    <div style="background:rgba(89,72,54,0.14);border:1px solid rgba(161,147,126,0.18);border-top:1px solid rgba(161,147,126,0.32);border-radius:20px;padding:2.5rem;backdrop-filter:blur(16px);">
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:400;color:var(--board-l);margin-bottom:.4rem;">Privacy Policy</h1>
+      <p style="color:var(--text-m);font-size:.8rem;margin-bottom:2rem;letter-spacing:.04em;">Last updated: April 2026</p>
+
+      <div style="display:flex;flex-direction:column;gap:1.5rem;color:var(--text-m);font-size:.88rem;line-height:1.75;">
+
+        <section>
+          <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--board-l);margin-bottom:.5rem;">1. What MoodTunes is</h2>
+          <p>MoodTunes is a mood-based music discovery app. It helps you find songs that match how you feel, and lets you analyse any song&#8217;s audio features to determine its mood. It is a personal project, not a commercial service.</p>
+        </section>
+
+        <section>
+          <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--board-l);margin-bottom:.5rem;">2. Data we collect</h2>
+          <p><strong style="color:var(--board);">Account data</strong> &mdash; If you create an account, your username, email address, password (not transmitted anywhere &mdash; stored only in your own browser&#8217;s localStorage), and optional bio and profile picture are saved locally on your device only. We have no server. None of this data is sent to us.</p>
+          <p style="margin-top:.75rem;"><strong style="color:var(--board);">Spotify data</strong> &mdash; When you connect Spotify, you authorise us to access your Spotify account using OAuth 2.0 PKCE. We only request the <code style="background:rgba(48,20,19,0.6);padding:1px 6px;border-radius:4px;font-size:.82em;">user-read-private</code> scope, which allows us to call the Spotify search and audio-features APIs on your behalf. We do not store your Spotify username, email, or any listening history. Your Spotify access token is stored only in your browser&#8217;s localStorage and expires after 1 hour.</p>
+          <p style="margin-top:.75rem;"><strong style="color:var(--board);">No analytics, no tracking</strong> &mdash; We do not use cookies, tracking pixels, Google Analytics, or any third-party analytics service.</p>
+        </section>
+
+        <section>
+          <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--board-l);margin-bottom:.5rem;">3. Third-party services</h2>
+          <p><strong style="color:var(--board);">Spotify</strong> &mdash; Song search and audio features are provided by the Spotify Web API. When you use the analyser, your queries are sent to Spotify&#8217;s servers. Spotify&#8217;s own <a href="https://www.spotify.com/legal/privacy-policy/" target="_blank" style="color:var(--board);text-decoration:none;border-bottom:1px solid rgba(161,147,126,0.3);">Privacy Policy</a> applies to that data.</p>
+          <p style="margin-top:.75rem;"><strong style="color:var(--board);">Google Fonts</strong> &mdash; This app loads the Cormorant Garamond and DM Sans fonts from Google Fonts, which may log your IP address per Google&#8217;s privacy policy.</p>
+          <p style="margin-top:.75rem;"><strong style="color:var(--board);">YouTube</strong> &mdash; Clicking the play button on a song recommendation opens a YouTube search in a new tab. YouTube&#8217;s privacy policy applies there.</p>
+        </section>
+
+        <section>
+          <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--board-l);margin-bottom:.5rem;">4. Data storage</h2>
+          <p>All app data (account, Spotify token, preferences) is stored exclusively in your browser&#8217;s <code style="background:rgba(48,20,19,0.6);padding:1px 6px;border-radius:4px;font-size:.82em;">localStorage</code>. It never leaves your device and is not accessible to us. You can clear it at any time by clearing your browser&#8217;s site data or clicking &#8220;Log out&#8221; / &#8220;Disconnect&#8221; within the app.</p>
+        </section>
+
+        <section>
+          <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--board-l);margin-bottom:.5rem;">5. Children&#8217;s privacy</h2>
+          <p>MoodTunes is not directed at children under 13. We do not knowingly collect any data from children.</p>
+        </section>
+
+        <section>
+          <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--board-l);margin-bottom:.5rem;">6. Your rights</h2>
+          <p>Since all data is stored locally in your browser, you have full control over it. To delete everything: clear your browser&#8217;s localStorage for this site. To disconnect Spotify: click &#8220;Disconnect&#8221; in the analyser tab &mdash; this removes your access token immediately.</p>
+        </section>
+
+        <section>
+          <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--board-l);margin-bottom:.5rem;">7. Changes to this policy</h2>
+          <p>If this policy changes materially, the &#8220;Last updated&#8221; date above will be updated. Continued use of the app after changes constitutes acceptance.</p>
+        </section>
+
+        <section>
+          <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--board-l);margin-bottom:.5rem;">8. Contact</h2>
+          <p>For any privacy questions, please open an issue on the project&#8217;s GitHub repository or contact the developer directly.</p>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// =========================================================
+// SONG DATABASE — mood x genre, 12+ songs each
+// shownSongs tracks what's been displayed to ensure fresh shuffles
+// =========================================================
+const MOODS=[
+  {id:'happy',label:'Happy',icon:'☀️'},
+  {id:'sad',label:'Sad',icon:'🌧️'},
+  {id:'angry',label:'Angry',icon:'🔥'},
+  {id:'stressed',label:'Stressed',icon:'🌀'},
+  {id:'studious',label:'Studious',icon:'📚'},
+  {id:'nostalgic',label:'Nostalgic',icon:'🎞️'},
+  {id:'period',label:'Period Cramps',icon:'🌸'},
+  {id:'chill',label:'Chill',icon:'🌿'},
+  {id:'romantic',label:'Romantic',icon:'🌹'},
+  {id:'energetic',label:'Energetic',icon:'⚡'},
+  {id:'melancholic',label:'Melancholic',icon:'🌫️'},
+  {id:'confident',label:'Confident',icon:'💎'},
+];
+
+const GENRES=[
+  'English Pop','Spanish','Hip-Hop','K-Pop','R&B / Soul',
+  'Indie','Classical','Rock','Metal','Electronic',
+  'Latin','Jazz','Alternative','Bollywood','French',
+  'Afrobeats','Portuguese','Turkish','German','J-Pop',
+];
+
+// Each entry: {t:title, a:artist, b:bpm}
+// Pool is large (20+) so shuffle always gives fresh 15
+const DB={
+  happy:{
+    'English Pop':[
+      {t:'Levitating',a:'Dua Lipa',b:103,dur:203},{t:'Good as Hell',a:'Lizzo',b:96,dur:210},
+      {t:"Can't Stop the Feeling!",a:'Justin Timberlake',b:113},{t:'Shake It Off',a:'Taylor Swift',b:160,dur:219},
+      {t:'Blinding Lights',a:'The Weeknd',b:171,dur:200},{t:'Uptown Funk',a:'Bruno Mars',b:115,dur:270},
+      {t:'Happy',a:'Pharrell Williams',b:160,dur:233},{t:'Watermelon Sugar',a:'Harry Styles',b:95,dur:174},
+      {t:'Anti-Hero',a:'Taylor Swift',b:97,dur:200},{t:'As It Was',a:'Harry Styles',b:174,dur:167},
+      {t:'Shape of You',a:'Ed Sheeran',b:96,dur:234},{t:'Sorry',a:'Justin Bieber',b:100,dur:210},
+      {t:'Cheap Thrills',a:'Sia',b:93,dur:210},{t:'Thunder',a:'Imagine Dragons',b:168,dur:210},
+      {t:'Believer',a:'Imagine Dragons',b:125,dur:210},{t:'Counting Stars',a:'OneRepublic',b:122,dur:210},
+      {t:'Shut Up and Dance',a:'WALK THE MOON',b:128,dur:210},{t:'Sugar',a:'Maroon 5',b:122,dur:210},
+      {t:'Roses',a:'The Chainsmokers',b:100,dur:210},{t:'Closer',a:'The Chainsmokers',b:95,dur:210},
+    ],
+    'Spanish':[
+      {t:'Bzrp Session #53',a:'Bizarrap & Shakira',b:98,dur:211},{t:'La Bicicleta',a:'Carlos Vives & Shakira',b:128,dur:210},
+      {t:'Bailando',a:'Enrique Iglesias',b:130,dur:270},{t:'Despacito',a:'Luis Fonsi & Daddy Yankee',b:89,dur:229},
+      {t:'Me Gusta',a:'Anitta & Cardi B',b:96,dur:210},{t:'Yo x Ti Tu x Mi',a:'ROSALÍA & Ozuna',b:90,dur:177},
+      {t:'Felices los 4',a:'Maluma',b:90,dur:210},{t:'Danza Kuduro',a:'Don Omar & Lucenzo',b:136,dur:210},
+      {t:'El Farsante',a:'Ozuna',b:88,dur:210},{t:'Hawái',a:'Maluma',b:93,dur:208},
+      {t:'Todo de Ti',a:'Rauw Alejandro',b:95,dur:210},{t:'Qué Calor',a:'Major Lazer & J Balvin',b:100,dur:210},
+      {t:'Con Calma',a:'Daddy Yankee & Snow',b:97,dur:210},{t:'La Gasolina',a:'Daddy Yankee',b:100,dur:213},
+      {t:'Taki Taki',a:'DJ Snake',b:98,dur:210},{t:'MIA',a:'Bad Bunny & Drake',b:86,dur:210},
+      {t:'I Like It',a:'Cardi B & Bad Bunny',b:121,dur:210},{t:'Dakiti',a:'Bad Bunny & Jhay Cortez',b:91,dur:200},
+      {t:'Callaíta',a:'Bad Bunny',b:77,dur:234},{t:'Tusa',a:'Karol G & Nicki Minaj',b:98,dur:200},
+    ],
+    'Hip-Hop':[
+      {t:'HUMBLE.',a:'Kendrick Lamar',b:150,dur:177},{t:"God's Plan",a:'Drake',b:77},
+      {t:'Congratulations',a:'Post Malone',b:110,dur:220},{t:'Sicko Mode',a:'Travis Scott',b:155,dur:312},
+      {t:'Rockstar',a:'Post Malone & 21 Savage',b:160,dur:218},{t:'Rich Flex',a:'Drake & 21 Savage',b:94,dur:212},
+      {t:'Essence',a:'Wizkid & Tems',b:96,dur:244},{t:'HIGHEST IN THE ROOM',a:'Travis Scott',b:138,dur:210},
+      {t:'DNA.',a:'Kendrick Lamar',b:83,dur:185},{t:'Alright',a:'Kendrick Lamar',b:94,dur:219},
+      {t:'Started From the Bottom',a:'Drake',b:88,dur:210},{t:'Powerglide',a:'Rae Sremmurd',b:79,dur:210},
+      {t:'Versace',a:'Migos',b:137,dur:210},{t:'Bad and Boujee',a:'Migos',b:130,dur:210},
+      {t:'Congratulations',a:'Mac Miller',b:93,dur:210},{t:'Good Times',a:'Chance the Rapper',b:96,dur:210},
+      {t:'No Problem',a:'Chance the Rapper',b:100,dur:210},{t:'Same Drugs',a:'Chance the Rapper',b:75,dur:210},
+      {t:'Sunday Candy',a:'Chance the Rapper',b:92,dur:210},{t:'Blessings',a:'Chance the Rapper',b:80,dur:210},
+    ],
+    'K-Pop':[
+      {t:'Dynamite',a:'BTS',b:114,dur:199},{t:'Fancy',a:'TWICE',b:112,dur:210},
+      {t:'How You Like That',a:'BLACKPINK',b:135,dur:182},{t:'ELEVEN',a:'IVE',b:119,dur:171},
+      {t:'Pink Venom',a:'BLACKPINK',b:137,dur:196},{t:'Butter',a:'BTS',b:110,dur:164},
+      {t:'Tomboy',a:'(G)I-DLE',b:126,dur:193},{t:'Next Level',a:'aespa',b:116,dur:210},
+      {t:'Hype Boy',a:'NewJeans',b:130,dur:185},{t:'Celebrity',a:'IU',b:118,dur:191},
+      {t:'Ditto',a:'NewJeans',b:90,dur:189},{t:'Feel Special',a:'TWICE',b:110,dur:210},
+      {t:'ASAP',a:'TWICE',b:115,dur:210},{t:'More & More',a:'TWICE',b:117,dur:210},
+      {t:'Alcohol-Free',a:'TWICE',b:104,dur:210},{t:'Psycho',a:'Red Velvet',b:130,dur:210},
+      {t:'Power Up',a:'Red Velvet',b:130,dur:210},{t:'Bad Boy',a:'Red Velvet',b:104,dur:210},
+      {t:'Monster',a:'EXO',b:138,dur:210},{t:'Call Me Baby',a:'EXO',b:126,dur:210},
+    ],
+    'R&B / Soul':[
+      {t:'Leave the Door Open',a:'Silk Sonic',b:90,dur:243},{t:'Good Days',a:'SZA',b:117,dur:375},
+      {t:'Peaches',a:'Justin Bieber',b:90,dur:210},{t:'Best Part',a:'Daniel Caesar & H.E.R.',b:78,dur:218},
+      {t:'Die For You',a:'The Weeknd',b:104,dur:260},{t:'Overjoyed',a:'Stevie Wonder',b:112,dur:210},
+      {t:'Crazy in Love',a:'Beyoncé',b:100,dur:236},{t:'No Scrubs',a:'TLC',b:100,dur:210},
+      {t:'Superstar',a:'Usher',b:85,dur:248},{t:'Yeah!',a:'Usher',b:104,dur:210},
+      {t:'Burn',a:'Usher',b:96,dur:210},{t:'My Boo',a:'Usher & Alicia Keys',b:92,dur:210},
+      {t:'If I Ain\'t Got You',a:'Alicia Keys',b:82,dur:210},{t:'Fallin\'',a:'Alicia Keys',b:90,dur:210},
+      {t:'No One',a:'Alicia Keys',b:96,dur:210},{t:'Girl on Fire',a:'Alicia Keys',b:120,dur:210},
+      {t:'Empire State of Mind',a:'Jay-Z & Alicia Keys',b:84,dur:210},{t:'New York State of Mind',a:'Jay-Z',b:80,dur:210},
+      {t:'99 Problems',a:'Jay-Z',b:140,dur:210},{t:'Run This Town',a:'Jay-Z & Rihanna',b:95,dur:210},
+    ],
+    'Indie':[
+      {t:'Electric Feel',a:'MGMT',b:109,dur:230},{t:'Golden Hour',a:'JVKE',b:97,dur:209},
+      {t:"Dog Days Are Over",a:"Florence + The Machine",b:168},{t:'Little Talks',a:'Of Monsters and Men',b:96,dur:210},
+      {t:'Ho Hey',a:'The Lumineers',b:136,dur:163},{t:'Budapest',a:'George Ezra',b:128,dur:210},
+      {t:'Take a Walk',a:'Passion Pit',b:131,dur:210},{t:'Stubborn Love',a:'The Lumineers',b:126,dur:239},
+      {t:'Mykonos',a:'Fleet Foxes',b:92,dur:210},{t:'Youth',a:'Daughter',b:92,dur:210},
+      {t:'Bloom',a:'The Paper Kites',b:84,dur:210},{t:'Fire Escape',a:'Andrew McMahon',b:120,dur:210},
+      {t:'Home',a:'Edward Sharpe & The Magnetic Zeros',b:94,dur:210},{t:'40 Day Dream',a:'Edward Sharpe',b:98,dur:210},
+      {t:'Shake Me Down',a:'Cage the Elephant',b:112,dur:210},{t:'Ain\'t No Rest for the Wicked',a:'Cage the Elephant',b:122,dur:210},
+      {t:'Shake Me Down',a:'Cage the Elephant',b:112,dur:210},{t:'Come a Little Closer',a:'Cage the Elephant',b:87,dur:210},
+      {t:'Cigarette Daydreams',a:'Cage the Elephant',b:84,dur:210},{t:'Mess Is Mine',a:'Vance Joy',b:134,dur:210},
+    ],
+    'Rock':[
+      {t:"Don't Stop Me Now",a:'Queen',b:156},{t:'Bohemian Rhapsody',a:'Queen',b:72,dur:354},
+      {t:'Mr. Brightside',a:'The Killers',b:148,dur:222},{t:'Seven Nation Army',a:'The White Stripes',b:124,dur:210},
+      {t:"It's My Life",a:'Bon Jovi',b:120},{t:'Highway to Hell',a:'AC/DC',b:116,dur:210},
+      {t:'We Will Rock You',a:'Queen',b:81,dur:210},{t:'Jump',a:'Van Halen',b:132,dur:210},
+      {t:'Livin on a Prayer',a:'Bon Jovi',b:123,dur:210},{t:'Eye of the Tiger',a:'Survivor',b:109,dur:245},
+      {t:'Walking on Sunshine',a:'Katrina & The Waves',b:152,dur:210},{t:'Here I Go Again',a:'Whitesnake',b:120,dur:210},
+      {t:'Pour Some Sugar on Me',a:'Def Leppard',b:124,dur:210},{t:'Summer of \'69',a:'Bryan Adams',b:144,dur:210},
+      {t:'Centerfold',a:'J. Geils Band',b:166,dur:210},{t:'Brown Eyed Girl',a:'Van Morrison',b:150,dur:210},
+      {t:'Sweet Home Alabama',a:'Lynyrd Skynyrd',b:100,dur:210},{t:'Old Time Rock and Roll',a:'Bob Seger',b:132,dur:210},
+      {t:'Come on Eileen',a:'Dexys Midnight Runners',b:175,dur:210},{t:'Take On Me',a:'a-ha',b:169,dur:210},
+    ],
+    'Metal':[
+      {t:'Don\'t Stop Believin\'',a:'Journey',b:119,dur:210},{t:'Living for the Night',a:'Night Ranger',b:130,dur:210},
+      {t:'Kickstart My Heart',a:'Mötley Crüe',b:141,dur:210},{t:'Girls Girls Girls',a:'Mötley Crüe',b:130,dur:210},
+      {t:'Panama',a:'Van Halen',b:142,dur:210},{t:'Hot for Teacher',a:'Van Halen',b:182,dur:210},
+      {t:'Welcome to the Jungle',a:'Guns N\' Roses',b:124,dur:210},{t:'Paradise City',a:'Guns N\' Roses',b:100,dur:210},
+      {t:'Round and Round',a:'Ratt',b:130,dur:210},{t:'Talk Dirty to Me',a:'Poison',b:130,dur:210},
+      {t:'I Wanna Rock',a:'Twisted Sister',b:138,dur:210},{t:'We\'re Not Gonna Take It',a:'Twisted Sister',b:144,dur:210},
+      {t:'Youth Gone Wild',a:'Skid Row',b:155,dur:210},{t:'18 and Life',a:'Skid Row',b:110,dur:210},
+      {t:'Photograph',a:'Def Leppard',b:118,dur:210},{t:'Rock of Ages',a:'Def Leppard',b:120,dur:210},
+      {t:'Foolin\'',a:'Def Leppard',b:106,dur:210},{t:'Animal',a:'Def Leppard',b:110,dur:210},
+      {t:'Hysteria',a:'Def Leppard',b:116,dur:210},{t:'Love Bites',a:'Def Leppard',b:80,dur:210},
+    ],
+    'Electronic':[
+      {t:'Titanium',a:'David Guetta & Sia',b:126,dur:245},{t:'Midnight City',a:'M83',b:105,dur:244},
+      {t:'Clarity',a:'Zedd & Foxes',b:128,dur:210},{t:'Lean On',a:'Major Lazer & MØ',b:98,dur:210},
+      {t:'One More Time',a:'Daft Punk',b:123,dur:320},{t:'Around the World',a:'Daft Punk',b:121,dur:428},
+      {t:'Blue (Da Ba Dee)',a:'Eiffel 65',b:136,dur:210},{t:'Levels',a:'Avicii',b:126,dur:324},
+      {t:'Wake Me Up',a:'Avicii',b:124,dur:247},{t:'Animals',a:'Martin Garrix',b:128,dur:278},
+      {t:'Silence',a:'Marshmello & Khalid',b:100,dur:210},{t:'Happier',a:'Marshmello & Bastille',b:100,dur:210},
+      {t:'Friends',a:'Marshmello & Anne-Marie',b:95,dur:210},{t:'KIDS',a:'MGMT',b:112,dur:210},
+      {t:'Time to Pretend',a:'MGMT',b:96,dur:257},{t:'Weekend',a:'Smith & Mighty',b:102,dur:210},
+      {t:'Sweet Nothing',a:'Calvin Harris & Florence',b:128,dur:210},{t:'Feel So Close',a:'Calvin Harris',b:128,dur:210},
+      {t:'Summer',a:'Calvin Harris',b:128,dur:210},{t:'Outside',a:'Calvin Harris & Ellie Goulding',b:128,dur:210},
+    ],
+    'Bollywood':[
+      {t:'Badtameez Dil',a:'Pritam',b:138,dur:239},{t:'Gallan Goodiyaan',a:'Shankar-Ehsaan-Loy',b:128,dur:295},
+      {t:'Balam Pichkari',a:'Vishal-Shekhar',b:126,dur:210},{t:'Nagada Sang Dhol',a:'Shreya Ghoshal',b:140,dur:210},
+      {t:'London Thumakda',a:'Sachin-Jigar',b:145,dur:228},{t:'Ainvayi Ainvayi',a:'Salim-Sulaiman',b:130,dur:210},
+      {t:'Desi Girl',a:'Shankar Ehsaan Loy',b:148,dur:210},{t:'Jai Ho',a:'A. R. Rahman',b:144,dur:210},
+      {t:'Dhoom Machale',a:'Sunidhi Chauhan',b:150,dur:210},{t:'Malhari',a:'Vishal-Shekhar',b:160,dur:264},
+      {t:'Aankh Marey',a:'Tanishk Bagchi',b:130,dur:210},{t:'Simmba Title Track',a:'Tanishk Bagchi',b:128,dur:210},
+      {t:'Dil Chori',a:'Yo Yo Honey Singh',b:118,dur:210},{t:'Ek Ladki Ko Dekha',a:'A. R. Rahman',b:100,dur:210},
+      {t:'Swag Se Swagat',a:'Vishal-Shekhar',b:132,dur:210},{t:'Radha',a:'Vishal-Shekhar',b:124,dur:210},
+      {t:'Cutie Pie',a:'Pritam',b:126,dur:210},{t:'Sau Dard',a:'Pritam',b:128,dur:210},
+      {t:'Matargashti',a:'Mohit Chauhan',b:136,dur:210},{t:'Nashe Si Chadh Gayi',a:'Pritam',b:130,dur:210},
+    ],
+    'Afrobeats':[
+      {t:'Last Last',a:'Burna Boy',b:106,dur:197},{t:'Jerusalema',a:'Master KG',b:106,dur:365},
+      {t:'Essence',a:'Wizkid & Tems',b:96,dur:244},{t:'Love Nwantiti',a:'CKay',b:97,dur:185},
+      {t:'Telephone',a:'Fireboy DML',b:96,dur:210},{t:'Peru',a:'Fireboy DML & Ed Sheeran',b:96,dur:203},
+      {t:'Monalisa',a:'Lojay & Sarz',b:98,dur:210},{t:'Calm Down',a:'Rema',b:106,dur:218},
+      {t:'Bounce',a:'Davido',b:90,dur:210},{t:'FEM',a:'Davido',b:100,dur:210},
+      {t:'Fall',a:'Davido',b:89,dur:231},{t:'Joro',a:'Wizkid',b:97,dur:210},
+      {t:'Mood',a:'Wizkid',b:88,dur:210},{t:'Made in Lagos',a:'Wizkid',b:90,dur:210},
+      {t:'True Love',a:'Wizkid & Burna Boy',b:94,dur:210},{t:'Run My Race',a:'Burna Boy',b:112,dur:210},
+      {t:'Kilometre',a:'Burna Boy',b:112,dur:210},{t:'Way Too Big',a:'Burna Boy',b:98,dur:210},
+      {t:'Bank on It',a:'Burna Boy',b:105,dur:210},{t:'Alarm Clock',a:'Burna Boy',b:110,dur:210},
+    ],
+    'French':[
+      {t:'La Vie en Rose',a:'Édith Piaf',b:118,dur:191},{t:'Non, je ne regrette rien',a:'Édith Piaf',b:80,dur:130},
+      {t:'Alors on danse',a:'Stromae',b:124,dur:211},{t:'Papaoutai',a:'Stromae',b:128,dur:254},
+      {t:'Formidable',a:'Stromae',b:130,dur:215},{t:'Tous les mêmes',a:'Stromae',b:122,dur:210},
+      {t:'La Vie',a:'Kyo',b:138,dur:210},{t:'Une belle histoire',a:'Michel Fugain',b:120,dur:210},
+      {t:'Ne me quitte pas',a:'Jacques Brel',b:68,dur:270},{t:'La Bohème',a:'Charles Aznavour',b:88,dur:228},
+      {t:'L\'Aziza',a:'Daniel Balavoine',b:126,dur:210},{t:'Je suis venu te dire',a:'Serge Gainsbourg',b:100,dur:210},
+      {t:'Ce jeu',a:'Yelle',b:130,dur:210},{t:'A cause des garçons',a:'Yelle',b:128,dur:210},
+      {t:'Renaissance',a:'DJ Snake',b:120,dur:210},{t:'Lean On (French)',a:'Major Lazer',b:98,dur:210},
+      {t:'Orelsan — Basique',a:'Orelsan',b:88,dur:210},{t:'Défaite de famille',a:'Orelsan',b:90,dur:210},
+      {t:'La Fête',a:'Orelsan',b:100,dur:210},{t:'Nekfeu — Foufoue',a:'Nekfeu',b:96,dur:210},
+    ],
+    'J-Pop':[
+      {t:'Lemon',a:'Kenshi Yonezu',b:88,dur:271},{t:'Paprika',a:'Kenshi Yonezu',b:119,dur:229},
+      {t:'Uma to Shika',a:'King Gnu',b:130,dur:210},{t:'Hakujitsu',a:'King Gnu',b:120,dur:210},
+      {t:'Idol',a:'YOASOBI',b:180,dur:214},{t:'Yoru ni Kakeru',a:'YOASOBI',b:130,dur:258},
+      {t:'Shinunoga E-Wa',a:'Fujii Kaze',b:120,dur:210},{t:'Matsuri',a:'Fujii Kaze',b:126,dur:210},
+      {t:'Zenzenzense',a:'RADWIMPS',b:104,dur:250},{t:'Sparkle',a:'RADWIMPS',b:136,dur:294},
+      {t:'Gurenge',a:'LiSA',b:170,dur:229},{t:'Homura',a:'LiSA',b:150,dur:210},
+      {t:'Pretender',a:'Official HIGE DANdism',b:130,dur:264},{t:'I LOVE...',a:'Official HIGE DANdism',b:138,dur:210},
+      {t:'Cry Baby',a:'Official HIGE DANdism',b:180,dur:210},{t:'Mixed Nuts',a:'Official HIGE DANdism',b:136,dur:210},
+      {t:'Oshi no Ko',a:'YOASOBI',b:165,dur:210},{t:'Biri-Biri',a:'YOASOBI',b:150,dur:210},
+      {t:'Ao no Sumika',a:'Tatsuya Kitani',b:130,dur:210},{t:'Kaikai Kitan',a:'Eve',b:190,dur:210},
+    ],
+    'Portuguese':[
+      {t:'Evidências',a:'Chitãozinho & Xororó',b:90,dur:210},{t:'País Tropical',a:'Jorge Ben Jor',b:96,dur:210},
+      {t:'Garota de Ipanema',a:'João Gilberto',b:120,dur:162},{t:'A Banda',a:'Chico Buarque',b:118,dur:210},
+      {t:'Água de Março',a:'Elis Regina',b:90,dur:210},{t:'Asa Branca',a:'Luiz Gonzaga',b:100,dur:210},
+      {t:'Baião',a:'Luiz Gonzaga',b:108,dur:210},{t:'Que País É Este',a:'Legião Urbana',b:138,dur:210},
+      {t:'Eduardo e Mônica',a:'Legião Urbana',b:126,dur:272},{t:'Tempo Perdido',a:'Legião Urbana',b:104,dur:318},
+      {t:'Pais e Filhos',a:'Legião Urbana',b:120,dur:210},{t:'Monte Castelo',a:'Legião Urbana',b:112,dur:210},
+      {t:'Para Lennon e McCartney',a:'Milton Nascimento',b:96,dur:210},{t:'Coração de Estudante',a:'Milton Nascimento',b:88,dur:210},
+      {t:'Amor I Love You',a:'Marisa Monte',b:102,dur:210},{t:'Gentileza',a:'Marisa Monte',b:98,dur:210},
+      {t:'Beija Eu',a:'Marisa Monte',b:96,dur:210},{t:'Ainda Bem',a:'Marisa Monte',b:110,dur:210},
+      {t:'Mais do Mesmo',a:'Jota Quest',b:130,dur:210},{t:'Dias Melhores',a:'Jota Quest',b:128,dur:210},
+    ],
+    'Turkish':[
+      {t:'Simarik',a:'Tarkan',b:128,dur:214},{t:'Acı Aşk',a:'Tarkan',b:100,dur:210},
+      {t:'Beni Çok Sev',a:'Tarkan',b:120,dur:210},{t:'Dudu',a:'Tarkan',b:126,dur:210},
+      {t:'Hepsi Geçer',a:'Sertab Erener',b:130,dur:210},{t:'Aşk',a:'Sertab Erener',b:118,dur:210},
+      {t:'Değeri Var',a:'Hadise',b:122,dur:210},{t:'Düm Tek Tek',a:'Hadise',b:128,dur:210},
+      {t:'İkimizin Yerine',a:'Sıla',b:108,dur:210},{t:'Ben de Yanarım',a:'Sıla',b:112,dur:210},
+      {t:'Yok Artık',a:'Bengü',b:120,dur:210},{t:'Her Şey Seninle Güzel',a:'Bengü',b:116,dur:210},
+      {t:'Gel',a:'Semicenk',b:110,dur:210},{t:'Yalnızlık',a:'Yaşlı Amca',b:88,dur:210},
+      {t:'Unutamam',a:'Sertab Erener',b:105,dur:210},{t:'Aşkın Olayım',a:'Sertab Erener',b:118,dur:210},
+      {t:'Sarhoş',a:'Duman',b:112,dur:238},{t:'Belki',a:'Duman',b:100,dur:245},
+      {t:'Can',a:'Duman',b:108,dur:210},{t:'Seni Sana Bıraktım',a:'Duman',b:96,dur:210},
+    ],
+    'German':[
+      {t:'99 Luftballons',a:'Nena',b:128,dur:237},{t:'Major Tom',a:'Peter Schilling',b:130,dur:210},
+      {t:'Du Hast',a:'Rammstein',b:124,dur:228},{t:'Engel',a:'Rammstein',b:130,dur:252},
+      {t:'Links 2-3-4',a:'Rammstein',b:130,dur:210},{t:'Feuer Frei!',a:'Rammstein',b:140,dur:210},
+      {t:'Amerika',a:'Rammstein',b:126,dur:210},{t:'Mein Teil',a:'Rammstein',b:130,dur:210},
+      {t:'Sonne',a:'Rammstein',b:130,dur:210},{t:'Ohne Dich',a:'Rammstein',b:80,dur:271},
+      {t:'Ich Will',a:'Rammstein',b:130,dur:210},{t:'Rosenrot',a:'Rammstein',b:122,dur:210},
+      {t:'Schrei',a:'Tokio Hotel',b:136,dur:210},{t:'Durch den Monsun',a:'Tokio Hotel',b:130,dur:210},
+      {t:'An deiner Seite (Ich bin da)',a:'Tokio Hotel',b:120,dur:210},{t:'Rette mich',a:'Tokio Hotel',b:138,dur:210},
+      {t:'Spring Nicht',a:'Tokio Hotel',b:130,dur:210},{t:'Ready, Set, Go!',a:'Tokio Hotel',b:140,dur:210},
+      {t:'Lass mich mit dir tauschen',a:'Tokio Hotel',b:132,dur:210},{t:'In die Nacht',a:'Tokio Hotel',b:128,dur:210},
+    ],
+    'Latin':[
+      {t:'Despacito',a:'Luis Fonsi',b:89,dur:210},{t:'La Gasolina',a:'Daddy Yankee',b:100,dur:213},
+      {t:'I Like It',a:'Cardi B & Bad Bunny',b:121,dur:210},{t:'Con Calma',a:'Daddy Yankee & Snow',b:97,dur:210},
+      {t:'Taki Taki',a:'DJ Snake',b:98,dur:210},{t:'MIA',a:'Bad Bunny & Drake',b:86,dur:210},
+      {t:'Un Verano Sin Ti',a:'Bad Bunny',b:90,dur:210},{t:'Tití Me Preguntó',a:'Bad Bunny',b:100,dur:210},
+      {t:'El Apagón',a:'Bad Bunny',b:98,dur:210},{t:'Moscow Mule',a:'Bad Bunny',b:82,dur:210},
+      {t:'Efecto',a:'Bad Bunny',b:85,dur:210},{t:'Ojitos Lindos',a:'Bad Bunny & Bomba Estéreo',b:88,dur:210},
+      {t:'Me Porto Bonito',a:'Bad Bunny & Chencho',b:90,dur:210},{t:'Party',a:'Bad Bunny & Rauw Alejandro',b:92,dur:210},
+      {t:'Hawái',a:'Maluma',b:93,dur:208},{t:'Dakiti',a:'Bad Bunny & Jhay Cortez',b:91,dur:200},
+      {t:'Callaíta',a:'Bad Bunny',b:77,dur:234},{t:'Yonaguni',a:'Bad Bunny',b:80,dur:210},
+      {t:'Noche de Anoche',a:'Bad Bunny & Rosalía',b:90,dur:210},{t:'Lo Siento BB:/',a:'Bad Bunny & Tainy',b:84,dur:210},
+    ],
+    'Jazz':[
+      {t:'Take Five',a:'Dave Brubeck Quartet',b:176,dur:324},{t:'So What',a:'Miles Davis',b:136,dur:561},
+      {t:'Fly Me to the Moon',a:'Frank Sinatra',b:152,dur:210},{t:'Blue in Green',a:'Miles Davis',b:80,dur:337},
+      {t:"Ain't Misbehavin'",a:'Fats Waller',b:152},{t:'Autumn Leaves',a:'Chet Baker',b:120,dur:213},
+      {t:'Round Midnight',a:'Thelonious Monk',b:68,dur:332},{t:'My Favorite Things',a:'John Coltrane',b:204,dur:210},
+      {t:'Summertime',a:'Ella Fitzgerald',b:60,dur:202},{t:'All the Things You Are',a:'Charlie Parker',b:180,dur:210},
+      {t:'A Night in Tunisia',a:'Dizzy Gillespie',b:120,dur:210},{t:'Birdland',a:'Weather Report',b:160,dur:210},
+      {t:'Sing, Sing, Sing',a:'Benny Goodman',b:200,dur:210},{t:'In the Mood',a:'Glenn Miller',b:192,dur:210},
+      {t:'Take the A Train',a:'Duke Ellington',b:220,dur:210},{t:'Cantaloupe Island',a:'Herbie Hancock',b:140,dur:341},
+      {t:'Watermelon Man',a:'Herbie Hancock',b:148,dur:210},{t:'Maiden Voyage',a:'Herbie Hancock',b:120,dur:210},
+      {t:'Chameleon',a:'Herbie Hancock',b:152,dur:210},{t:'Lush Life',a:'John Coltrane',b:56,dur:210},
+    ],
+    'Alternative':[
+      {t:'Mr. Brightside',a:'The Killers',b:148,dur:222},{t:'Do I Wanna Know?',a:'Arctic Monkeys',b:85,dur:272},
+      {t:'R U Mine?',a:'Arctic Monkeys',b:96,dur:202},{t:'Pompeii',a:'Bastille',b:126,dur:212},
+      {t:'Stolen Dance',a:'Milky Chance',b:95,dur:253},{t:'Cleopatra',a:'The Lumineers',b:150,dur:210},
+      {t:'Ribs',a:'Lorde',b:79,dur:232},{t:'Yellow',a:'Coldplay',b:87,dur:269},
+      {t:'Tongue Tied',a:'Grouplove',b:176,dur:210},{t:'The Less I Know the Better',a:'Tame Impala',b:116,dur:216},
+      {t:'Let It Happen',a:'Tame Impala',b:116,dur:467},{t:'Electric Feel',a:'MGMT',b:109,dur:230},
+      {t:'Little Lion Man',a:'Mumford & Sons',b:174,dur:210},{t:'I Will Wait',a:'Mumford & Sons',b:160,dur:210},
+      {t:'Awake My Soul',a:'Mumford & Sons',b:154,dur:210},{t:'The Cave',a:'Mumford & Sons',b:162,dur:210},
+      {t:'After the Storm',a:'Mumford & Sons',b:112,dur:210},{t:'Sigh No More',a:'Mumford & Sons',b:110,dur:210},
+      {t:'Babel',a:'Mumford & Sons',b:162,dur:210},{t:'Ghosts That We Knew',a:'Mumford & Sons',b:92,dur:210},
+    ],
+    'Classical':[
+      {t:'Symphony No. 9',a:'Beethoven',b:72,dur:210},{t:'Eine Kleine Nachtmusik',a:'Mozart',b:148,dur:384},
+      {t:'Spring (The Four Seasons)',a:'Vivaldi',b:134,dur:198},{t:'Ode to Joy',a:'Beethoven',b:78,dur:248},
+      {t:'Hungarian Dance No. 5',a:'Brahms',b:220,dur:210},{t:'1812 Overture',a:'Tchaikovsky',b:132,dur:210},
+      {t:'Ride of the Valkyries',a:'Wagner',b:130,dur:210},{t:'Flight of the Bumblebee',a:'Rimsky-Korsakov',b:200,dur:210},
+      {t:'Rondo Alla Turca',a:'Mozart',b:140,dur:210},{t:'Marche Militaire',a:'Schubert',b:120,dur:210},
+      {t:'William Tell Overture',a:'Rossini',b:240,dur:210},{t:'Sabre Dance',a:'Khachaturian',b:160,dur:210},
+      {t:'In the Hall of the Mountain King',a:'Grieg',b:200,dur:210},{t:'Toccata and Fugue in D minor',a:'Bach',b:120,dur:210},
+      {t:'Peer Gynt Suite',a:'Grieg',b:144,dur:210},{t:'Piano Concerto No.1',a:'Tchaikovsky',b:76,dur:210},
+      {t:'Waltz of the Flowers',a:'Tchaikovsky',b:180,dur:210},{t:'Swan Lake',a:'Tchaikovsky',b:76,dur:210},
+      {t:'The Nutcracker Suite',a:'Tchaikovsky',b:112,dur:210},{t:'Pictures at an Exhibition',a:'Mussorgsky',b:108,dur:210},
+    ],
+  },
+  sad:{
+    'English Pop':[
+      {t:'Someone Like You',a:'Adele',b:67,dur:210},{t:'Drivers License',a:'Olivia Rodrigo',b:76,dur:242},
+      {t:"When the Party's Over",a:'Billie Eilish',b:74},{t:'Exile',a:'Taylor Swift ft. Bon Iver',b:79,dur:210},
+      {t:'Enough for You',a:'Olivia Rodrigo',b:76,dur:210},{t:'Make You Feel My Love',a:'Adele',b:76,dur:210},
+      {t:'All I Wanted',a:'Paramore',b:99,dur:210},{t:'The Joke',a:'Brandi Carlile',b:76,dur:210},
+      {t:'Slow Burn',a:'Kacey Musgraves',b:60,dur:210},{t:'Someone You Loved',a:'Lewis Capaldi',b:110,dur:182},
+      {t:'Before He Cheats',a:'Carrie Underwood',b:160,dur:210},{t:'My Immortal',a:'Evanescence',b:74,dur:210},
+      {t:'Good Riddance',a:'Green Day',b:76,dur:210},{t:'Yesterday',a:'The Beatles',b:96,dur:210},
+      {t:'Blackbird',a:'The Beatles',b:92,dur:210},{t:'The Long and Winding Road',a:'The Beatles',b:74,dur:210},
+      {t:'Let It Be',a:'The Beatles',b:71,dur:210},{t:'Hey Jude',a:'The Beatles',b:74,dur:210},
+      {t:'Eleanor Rigby',a:'The Beatles',b:126,dur:210},{t:'In My Life',a:'The Beatles',b:101,dur:210},
+    ],
+    'Spanish':[
+      {t:'Tusa',a:'Karol G & Nicki Minaj',b:98,dur:200},{t:'La Llorona',a:'Chavela Vargas',b:72,dur:210},
+      {t:'Bésame Mucho',a:'Consuelo Velázquez',b:68,dur:210},{t:'No Te Vayas',a:'Ha*Ash',b:80,dur:210},
+      {t:'Si No Te Hubieras Ido',a:'Marco Antonio Solís',b:70,dur:210},{t:'Te Extraño',a:'Xtreme',b:75,dur:210},
+      {t:'Volver',a:'Carlos Gardel',b:72,dur:210},{t:'Solamente Tú',a:'Pablo Alborán',b:68,dur:210},
+      {t:'Que Me Quedes Tú',a:'Shakira',b:76,dur:210},{t:'Entre Paréntesis',a:'Silvana Estrada',b:64,dur:210},
+      {t:'Quiero Olvidarte',a:'Río Roma',b:75,dur:210},{t:'Sin Ti',a:'Marco Antonio Solís',b:70,dur:210},
+      {t:'El Día que Me Quieras',a:'Carlos Gardel',b:76,dur:210},{t:'Caminito',a:'Carlos Gardel',b:68,dur:210},
+      {t:'La Puerta',a:'Vicentico',b:72,dur:210},{t:'Gracias a la Vida',a:'Mercedes Sosa',b:68,dur:210},
+      {t:'Alfonsina y el Mar',a:'Mercedes Sosa',b:60,dur:210},{t:'Todo Cambia',a:'Mercedes Sosa',b:72,dur:210},
+      {t:'Sólo le Pido a Dios',a:'Mercedes Sosa',b:64,dur:210},{t:'Un Hombre Así',a:'Natalia Lafourcade',b:70,dur:210},
+    ],
+    'Hip-Hop':[
+      {t:'The Search',a:'NF',b:90,dur:210},{t:'Let You Down',a:'NF',b:90,dur:210},
+      {t:'Lucid Dreams',a:'Juice WRLD',b:83,dur:239},{t:'Falling Down',a:'Lil Peep & XXXTentacion',b:90,dur:210},
+      {t:'Changes',a:'XXXTentacion',b:86,dur:131},{t:'SAD!',a:'XXXTentacion',b:76,dur:166},
+      {t:'Jocelyn Flores',a:'XXXTentacion',b:80,dur:210},{t:'Leave Out All the Rest',a:'Linkin Park',b:90,dur:210},
+      {t:'Numb/Encore',a:'Linkin Park & Jay-Z',b:112,dur:210},{t:'My People',a:'NF',b:85,dur:210},
+      {t:'Mansion',a:'NF',b:86,dur:210},{t:'How Could You Leave Us',a:'NF',b:84,dur:210},
+      {t:'Remember This',a:'NF',b:80,dur:210},{t:'Paralyzed',a:'NF',b:88,dur:210},
+      {t:'Got You on My Mind',a:'NF',b:82,dur:210},{t:'Notepad',a:'NF',b:86,dur:210},
+      {t:'Intro III',a:'NF',b:80,dur:210},{t:'Lie',a:'NF',b:84,dur:210},
+      {t:'Alone',a:'NF',b:90,dur:210},{t:'All I Have',a:'NF',b:88,dur:210},
+    ],
+    'K-Pop':[
+      {t:'Eight',a:'IU & Suga',b:88,dur:202},{t:'Through the Night',a:'IU',b:67,dur:244},
+      {t:'Spring Day',a:'BTS',b:104,dur:284},{t:'Love Poem',a:'IU',b:74,dur:210},
+      {t:'Blue & Grey',a:'BTS',b:75,dur:254},{t:'Butterfly',a:'BTS',b:74,dur:210},
+      {t:'Gone',a:'ROSÉ',b:97,dur:210},{t:'Hard to Love',a:'ROSÉ',b:120,dur:210},
+      {t:'Dear Me',a:'IU',b:72,dur:210},{t:'Someday',a:'IU',b:80,dur:210},
+      {t:'Hold My Hand',a:'IU',b:68,dur:210},{t:'Autumn Morning',a:'IU',b:78,dur:210},
+      {t:'Epilogue: Young Forever',a:'BTS',b:100,dur:210},{t:'00:00 (Zero O\'Clock)',a:'BTS',b:80,dur:210},
+      {t:'Winter Bear',a:'V (BTS)',b:68,dur:210},{t:'4 O\'Clock',a:'RM & V (BTS)',b:74,dur:210},
+      {t:'Dimple',a:'BTS',b:120,dur:210},{t:'Serendipity',a:'Jimin (BTS)',b:100,dur:210},
+      {t:'Singularity',a:'V (BTS)',b:70,dur:210},{t:'Intro: Serendipity',a:'BTS',b:84,dur:210},
+    ],
+    'R&B / Soul':[
+      {t:'All of Me',a:'John Legend',b:63,dur:269},{t:'Issues',a:'Julia Michaels',b:66,dur:162},
+      {t:'Back to Black',a:'Amy Winehouse',b:113,dur:243},{t:'Rehab',a:'Amy Winehouse',b:115,dur:213},
+      {t:'Take Care',a:'Drake & Rihanna',b:75,dur:210},{t:'Sober',a:'Mahalia',b:77,dur:210},
+      {t:'Cranes in the Sky',a:'Solange',b:82,dur:253},{t:'How Do I Say',a:'H.E.R.',b:80,dur:210},
+      {t:'Hard Place',a:'H.E.R.',b:78,dur:210},{t:'Focus',a:'H.E.R.',b:72,dur:210},
+      {t:'I Used to Know Her',a:'H.E.R.',b:76,dur:210},{t:'2',a:'Beyoncé',b:62,dur:210},
+      {t:'Sandcastles',a:'Beyoncé',b:60,dur:210},{t:'Pray You Catch Me',a:'Beyoncé',b:65,dur:210},
+      {t:'All Night',a:'Beyoncé',b:88,dur:210},{t:'Forward',a:'Beyoncé',b:58,dur:210},
+      {t:'Tears Dry on Their Own',a:'Amy Winehouse',b:128,dur:210},{t:'Wake Up Alone',a:'Amy Winehouse',b:100,dur:210},
+      {t:'Valerie',a:'Amy Winehouse',b:130,dur:210},{t:'You Know I\'m No Good',a:'Amy Winehouse',b:110,dur:210},
+    ],
+    'Indie':[
+      {t:'Motion Sickness',a:'Phoebe Bridgers',b:107,dur:234},{t:'Funeral',a:'Phoebe Bridgers',b:68,dur:221},
+      {t:'Skinny Love',a:'Bon Iver',b:92,dur:213},{t:'Holocene',a:'Bon Iver',b:80,dur:346},
+      {t:'The Night We Met',a:'Lord Huron',b:120,dur:194},{t:'Death With Dignity',a:'Sufjan Stevens',b:96,dur:210},
+      {t:'Casimir Pulaski Day',a:'Sufjan Stevens',b:63,dur:210},{t:'To Build a Home',a:'The Cinematic Orchestra',b:60,dur:390},
+      {t:'Bloom',a:'The Paper Kites',b:84,dur:210},{t:'Eva',a:'Novo Amor',b:78,dur:210},
+      {t:'Fade Into You',a:'Mazzy Star',b:75,dur:210},{t:'Atlas Hands',a:'Benjamin Francis Leftwich',b:74,dur:210},
+      {t:'Ceilings',a:'Lizzy McAlpine',b:80,dur:202},{t:'Two of Us',a:'Lizzy McAlpine',b:78,dur:210},
+      {t:'Little Lies',a:'Lizzy McAlpine',b:76,dur:210},{t:'Staying',a:'Lizzy McAlpine',b:82,dur:210},
+      {t:'when the day is done',a:'beabadoobee',b:90,dur:210},{t:'Care',a:'beabadoobee',b:88,dur:210},
+      {t:'Coffee',a:'beabadoobee',b:82,dur:126},{t:'Death Bed',a:'Powfu & beabadoobee',b:85,dur:173},
+    ],
+    'Classical':[
+      {t:'Adagio for Strings',a:'Samuel Barber',b:56,dur:584},{t:'Clair de Lune',a:'Debussy',b:54,dur:317},
+      {t:'Moonlight Sonata',a:'Beethoven',b:60,dur:960},{t:'Lacrimosa',a:'Mozart',b:54,dur:210},
+      {t:'Air on the G String',a:'Bach',b:64,dur:210},{t:'Spiegel im Spiegel',a:'Arvo Pärt',b:52,dur:210},
+      {t:'Gymnopédie No.1',a:'Erik Satie',b:60,dur:215},{t:'Pavane',a:'Gabriel Fauré',b:60,dur:210},
+      {t:'Ave Maria',a:'Schubert',b:52,dur:210},{t:'Nimrod',a:'Elgar',b:54,dur:210},
+      {t:'Nuvole Bianche',a:'Ludovico Einaudi',b:60,dur:366},{t:'Experience',a:'Ludovico Einaudi',b:68,dur:352},
+      {t:'Divenire',a:'Ludovico Einaudi',b:112,dur:210},{t:'Oltremare',a:'Ludovico Einaudi',b:64,dur:210},
+      {t:'Primavera',a:'Ludovico Einaudi',b:58,dur:210},{t:'Le Onde',a:'Ludovico Einaudi',b:56,dur:210},
+      {t:'On the Nature of Daylight',a:'Max Richter',b:72,dur:397},{t:'Spring (Recomposed)',a:'Max Richter',b:58,dur:210},
+      {t:'Metamorphosis Two',a:'Philip Glass',b:76,dur:210},{t:'Arvo Pärt — Fur Alina',a:'Arvo Pärt',b:48,dur:210},
+    ],
+    'Rock':[
+      {t:'Fix You',a:'Coldplay',b:69,dur:295},{t:'The Sound of Silence',a:'Simon & Garfunkel',b:94,dur:210},
+      {t:'Hurt',a:'Johnny Cash',b:56,dur:217},{t:'Black',a:'Pearl Jam',b:70,dur:210},
+      {t:'Fake Plastic Trees',a:'Radiohead',b:66,dur:210},{t:'Amsterdam',a:'Coldplay',b:78,dur:210},
+      {t:'Wish You Were Here',a:'Pink Floyd',b:63,dur:334},{t:'Tears in Heaven',a:'Eric Clapton',b:75,dur:272},
+      {t:'The Scientist',a:'Coldplay',b:75,dur:309},{t:'Gravity',a:'John Mayer',b:72,dur:249},
+      {t:'Slow Dancing in a Burning Room',a:'John Mayer',b:91,dur:247},{t:'Daughters',a:'John Mayer',b:78,dur:210},
+      {t:'Stop This Train',a:'John Mayer',b:88,dur:210},{t:'3x5',a:'John Mayer',b:74,dur:210},
+      {t:'Comfortable',a:'John Mayer',b:84,dur:210},{t:'Back to You',a:'John Mayer',b:80,dur:210},
+      {t:'Free Fallin\'',a:'Tom Petty',b:84,dur:210},{t:'I Won\'t Back Down',a:'Tom Petty',b:120,dur:210},
+      {t:'Wildflowers',a:'Tom Petty',b:100,dur:210},{t:'Breakdown',a:'Tom Petty',b:112,dur:210},
+    ],
+    'Metal':[
+      {t:'Nothing Else Matters',a:'Metallica',b:74,dur:388},{t:'The Unforgiven',a:'Metallica',b:94,dur:388},
+      {t:'Fade to Black',a:'Metallica',b:112,dur:417},{t:'One',a:'Metallica',b:120,dur:446},
+      {t:'Orion',a:'Metallica',b:90,dur:210},{t:'The Call of Ktulu',a:'Metallica',b:80,dur:210},
+      {t:'Disappear',a:'Ozzy Osbourne',b:72,dur:210},{t:'Road to Nowhere',a:'Ozzy Osbourne',b:80,dur:210},
+      {t:'Dreamer',a:'Ozzy Osbourne',b:78,dur:210},{t:'Changes',a:'Ozzy Osbourne',b:66,dur:210},
+      {t:'Mama, I\'m Coming Home',a:'Ozzy Osbourne',b:80,dur:210},{t:'So Tired',a:'Ozzy Osbourne',b:68,dur:210},
+      {t:'Broken Wings',a:'Mr. Mister',b:80,dur:210},{t:'Take These Broken Wings',a:'Mr. Mister',b:86,dur:210},
+      {t:'Every Rose Has Its Thorn',a:'Poison',b:76,dur:210},{t:'Talk to Angels',a:'Poison',b:70,dur:210},
+      {t:'Patience',a:'Guns N\' Roses',b:80,dur:210},{t:'November Rain',a:'Guns N\' Roses',b:74,dur:210},
+      {t:'Don\'t Cry',a:'Guns N\' Roses',b:76,dur:210},{t:'Estranged',a:'Guns N\' Roses',b:80,dur:210},
+    ],
+    'Electronic':[
+      {t:'Teardrop',a:'Massive Attack',b:80,dur:330},{t:'Unfinished Sympathy',a:'Massive Attack',b:88,dur:210},
+      {t:'Breathe',a:'Télépopmusik',b:100,dur:210},{t:'Porcelain',a:'Moby',b:98,dur:237},
+      {t:'Mad World',a:'Gary Jules',b:89,dur:210},{t:'Only Time',a:'Enya',b:60,dur:210},
+      {t:'Youth',a:'Daughter',b:92,dur:210},{t:'Oblivion',a:'Grimes',b:130,dur:210},
+      {t:'Motion',a:'Bonobo',b:94,dur:366},{t:'Kerala',a:'Bonobo',b:90,dur:310},
+      {t:'Kong',a:'Bonobo',b:84,dur:210},{t:'Cirrus',a:'Bonobo',b:88,dur:210},
+      {t:'First Fires',a:'Bonobo',b:88,dur:210},{t:'Outlier',a:'Bonobo',b:89,dur:210},
+      {t:'Sapphire',a:'Bonobo',b:86,dur:210},{t:'Walk With Me',a:'Bonobo',b:90,dur:210},
+      {t:'Kiara',a:'Bonobo',b:85,dur:210},{t:'The Keeper',a:'Bonobo',b:88,dur:210},
+      {t:'Stay',a:'Bonobo',b:86,dur:210},{t:'Silver',a:'Bonobo',b:88,dur:210},
+    ],
+    'Bollywood':[
+      {t:'Tum Hi Ho',a:'Arijit Singh',b:65,dur:262},{t:'Teri Meri',a:'Shreya Ghoshal',b:68,dur:210},
+      {t:'Aaj Phir Tumpe',a:'Arijit Singh',b:72,dur:210},{t:'Channa Mereya',a:'Arijit Singh',b:76,dur:294},
+      {t:'Ae Dil Hai Mushkil',a:'Arijit Singh',b:70,dur:283},{t:'Phir Le Aya Dil',a:'Arijit Singh',b:68,dur:210},
+      {t:'Ik Vaari Aa',a:'Arijit Singh',b:66,dur:248},{t:'Fitoor',a:'Arijit Singh',b:74,dur:210},
+      {t:'Raabta',a:'Arijit Singh',b:78,dur:245},{t:'Kabhi Jo Baadal Barse',a:'Arijit Singh',b:70,dur:210},
+      {t:'Muskurane',a:'Arijit Singh',b:64,dur:210},{t:'Chahun Main Ya Naa',a:'Arijit Singh',b:72,dur:210},
+      {t:'Hua Hain Aaj',a:'Arijit Singh',b:68,dur:210},{t:'Teri Yaad',a:'Atif Aslam',b:70,dur:210},
+      {t:'Woh Lamhe',a:'Atif Aslam',b:72,dur:210},{t:'Aadat',a:'Atif Aslam',b:68,dur:210},
+      {t:'Pehli Nazar Mein',a:'Atif Aslam',b:74,dur:210},{t:'Tu Jane Na',a:'Atif Aslam',b:70,dur:210},
+      {t:'Doorie',a:'Atif Aslam',b:72,dur:210},{t:'Tere Sang Yaara',a:'Atif Aslam',b:68,dur:210},
+    ],
+    'Afrobeats':[
+      {t:'Falling',a:'Burna Boy',b:80,dur:210},{t:'Anybody',a:'Burna Boy',b:88,dur:210},
+      {t:'Secret',a:'Burna Boy',b:84,dur:210},{t:'Monsters You Made',a:'Burna Boy',b:86,dur:210},
+      {t:'Wonderful',a:'Burna Boy',b:90,dur:210},{t:'Real Life',a:'Burna Boy',b:85,dur:210},
+      {t:'Naughty by Nature',a:'Burna Boy',b:82,dur:210},{t:'Gum Body',a:'Burna Boy',b:88,dur:210},
+      {t:'Want It All',a:'Burna Boy',b:90,dur:210},{t:'Destiny',a:'Burna Boy',b:84,dur:210},
+      {t:'Ye',a:'Burna Boy',b:86,dur:206},{t:'Gbona',a:'Burna Boy',b:92,dur:210},
+      {t:'Heaven\'s Gate',a:'Burna Boy',b:80,dur:210},{t:'Mama',a:'Burna Boy',b:82,dur:210},
+      {t:'Dangote',a:'Burna Boy',b:88,dur:210},{t:'Rollercoaster',a:'Burna Boy',b:86,dur:210},
+      {t:'Alone',a:'Burna Boy',b:84,dur:210},{t:'Mercy',a:'Burna Boy',b:90,dur:210},
+      {t:'Collateral Damage',a:'Burna Boy',b:82,dur:210},{t:'Location',a:'Dave ft. Burna Boy',b:90,dur:210},
+    ],
+    'French':[
+      {t:'Ne me quitte pas',a:'Jacques Brel',b:68,dur:270},{t:'La Bohème',a:'Charles Aznavour',b:88,dur:228},
+      {t:'Non, je ne regrette rien',a:'Édith Piaf',b:80,dur:130},{t:'La Vie en Rose',a:'Édith Piaf',b:118,dur:191},
+      {t:'Hier encore',a:'Charles Aznavour',b:72,dur:210},{t:'Il venait d\'avoir dix-huit ans',a:'Dalida',b:90,dur:210},
+      {t:'Je suis malade',a:'Dalida',b:72,dur:210},{t:'Mourir sur scène',a:'Dalida',b:76,dur:210},
+      {t:'Le temps des fleurs',a:'Dalida',b:84,dur:210},{t:'Bambino',a:'Dalida',b:100,dur:210},
+      {t:'À présent',a:'Eva',b:70,dur:210},{t:'Histoire de coeur',a:'Mireille Mathieu',b:88,dur:210},
+      {t:'Pardonne-moi ce caprice d\'enfant',a:'Mireille Mathieu',b:80,dur:210},{t:'Santa Maria de la Mer',a:'Mireille Mathieu',b:86,dur:210},
+      {t:'Mon Dieu',a:'Édith Piaf',b:72,dur:210},{t:'L\'hymne à l\'amour',a:'Édith Piaf',b:76,dur:210},
+      {t:'Milord',a:'Édith Piaf',b:90,dur:210},{t:'L\'accordéoniste',a:'Édith Piaf',b:88,dur:210},
+      {t:'Sous le ciel de Paris',a:'Édith Piaf',b:100,dur:210},{t:'La foule',a:'Édith Piaf',b:94,dur:210},
+    ],
+    'J-Pop':[
+      {t:'Lemon',a:'Kenshi Yonezu',b:88,dur:271},{t:'Goodbye & Good Luck',a:'YOASOBI',b:100,dur:210},
+      {t:'Ano Yume wo Nazotte',a:'YOASOBI',b:110,dur:210},{t:'Tabun',a:'YOASOBI',b:95,dur:210},
+      {t:'Tsubame',a:'YOASOBI',b:100,dur:210},{t:'Encore',a:'YOASOBI',b:96,dur:210},
+      {t:'Racing into the Night',a:'YOASOBI',b:108,dur:210},{t:'Yuusha',a:'YOASOBI',b:100,dur:210},
+      {t:'Kaibutsu',a:'YOASOBI',b:140,dur:210},{t:'Monster',a:'YOASOBI',b:130,dur:210},
+      {t:'Seventeen',a:'YOASOBI',b:95,dur:210},{t:'Haruka',a:'YOASOBI',b:98,dur:210},
+      {t:'Moshimo Inochi ga Egakereru nara',a:'YOASOBI',b:90,dur:210},{t:'Valentine',a:'YOASOBI',b:96,dur:210},
+      {t:'Gunjou',a:'YOASOBI',b:110,dur:210},{t:'Halzion',a:'YOASOBI',b:94,dur:210},
+      {t:'Yuusha',a:'YOASOBI',b:100,dur:210},{t:'Suki ni Natta Sono Shunkan wo',a:'YOASOBI',b:88,dur:210},
+      {t:'Kessoku Band — Nani ga Warui',a:'Kessoku Band',b:90,dur:210},{t:'Bokura no',a:'Kessoku Band',b:88,dur:210},
+    ],
+    'Portuguese':[
+      {t:'Pecado',a:'Caetano Veloso',b:72,dur:210},{t:'O Leãozinho',a:'Caetano Veloso',b:88,dur:210},
+      {t:'Sozinho',a:'Caetano Veloso',b:80,dur:224},{t:'Terra',a:'Caetano Veloso',b:76,dur:210},
+      {t:'Você Não Me Ensinou a Te Esquecer',a:'Caetano Veloso',b:72,dur:210},{t:'Coração Vagabundo',a:'Caetano Veloso',b:80,dur:210},
+      {t:'Maria Bethânia — Cartomante',a:'Maria Bethânia',b:70,dur:210},{t:'Nave Maria',a:'Maria Bethânia',b:68,dur:210},
+      {t:'Balada do Louco',a:'Mutantes',b:88,dur:210},{t:'A Minha Menina',a:'Os Mutantes',b:96,dur:210},
+      {t:'Tempo Perdido',a:'Legião Urbana',b:104,dur:318},{t:'Pais e Filhos',a:'Legião Urbana',b:120,dur:210},
+      {t:'Monte Castelo',a:'Legião Urbana',b:112,dur:210},{t:'Há Tempos',a:'Legião Urbana',b:100,dur:210},
+      {t:'Pais e Filhos',a:'Legião Urbana',b:120,dur:210},{t:'Saudade',a:'Seu Jorge',b:80,dur:210},
+      {t:'Burguesinha',a:'Seu Jorge',b:96,dur:210},{t:'Carolina',a:'Seu Jorge',b:88,dur:210},
+      {t:'Leãozinho',a:'Seu Jorge',b:92,dur:210},{t:'Tive Razão',a:'Seu Jorge',b:84,dur:210},
+    ],
+    'Turkish':[
+      {t:'Hayat Bazen Tatlı',a:'Teoman',b:90,dur:210},{t:'Roman Havası',a:'Teoman',b:96,dur:210},
+      {t:'Ağlayamam',a:'Teoman',b:88,dur:210},{t:'Aşkın Sona Erdi',a:'Teoman',b:84,dur:210},
+      {t:'Bir Ceza Mahkemesinde Aşk',a:'Teoman',b:80,dur:210},{t:'Kral Çıplak',a:'Teoman',b:92,dur:210},
+      {t:'Günaydın',a:'Sıla',b:96,dur:210},{t:'Olmadı',a:'Sıla',b:90,dur:210},
+      {t:'Sen Benimsin',a:'Sıla',b:88,dur:210},{t:'Bana Ne Sordun',a:'Sıla',b:84,dur:210},
+      {t:'Çok Şey İstedim',a:'Sıla',b:86,dur:210},{t:'Yoksun',a:'Sıla',b:80,dur:210},
+      {t:'Anlamıyorum',a:'Sertab Erener',b:86,dur:210},{t:'Değersiz',a:'Sertab Erener',b:82,dur:210},
+      {t:'Hayatımı Yaktı',a:'Sertab Erener',b:88,dur:210},{t:'Sen Olsan da',a:'Sertab Erener',b:84,dur:210},
+      {t:'Gitme',a:'Bengü',b:82,dur:210},{t:'Seni Unutmak',a:'Bengü',b:80,dur:210},
+      {t:'Kalbim Yoruldu',a:'Bengü',b:78,dur:210},{t:'Seninle Güzel',a:'Bengü',b:84,dur:210},
+    ],
+    'German':[
+      {t:'Ohne Dich',a:'Rammstein',b:80,dur:271},{t:'Engel',a:'Rammstein',b:130,dur:252},
+      {t:'Mutter',a:'Rammstein',b:96,dur:210},{t:'Seemann',a:'Rammstein',b:88,dur:210},
+      {t:'Mein Herz Brennt',a:'Rammstein',b:90,dur:210},{t:'Nebel',a:'Rammstein',b:72,dur:210},
+      {t:'Frühling in Paris',a:'Rammstein',b:84,dur:210},{t:'Wilder Wein',a:'Rammstein',b:88,dur:210},
+      {t:'Klavier',a:'Rammstein',b:80,dur:210},{t:'Amour',a:'Rammstein',b:76,dur:210},
+      {t:'Haifisch',a:'Rammstein',b:88,dur:210},{t:'Rosenrot',a:'Rammstein',b:122,dur:210},
+      {t:'Hilf mir',a:'Rammstein',b:92,dur:210},{t:'Los',a:'Rammstein',b:90,dur:210},
+      {t:'Vergib mir',a:'Rammstein',b:86,dur:210},{t:'Spring',a:'Rammstein',b:100,dur:210},
+      {t:'Mein Land',a:'Rammstein',b:114,dur:210},{t:'Alle Warten auf das Licht',a:'Rammstein',b:94,dur:210},
+      {t:'Tattoo',a:'Rammstein',b:108,dur:210},{t:'Zeit',a:'Rammstein',b:84,dur:303},
+    ],
+    'Latin':[
+      {t:'Bésame Mucho',a:'Trio Los Panchos',b:68,dur:182},{t:'La Llorona',a:'Ángeles Ochoa',b:72,dur:210},
+      {t:'Te Quiero',a:'Mon Laferte',b:80,dur:210},{t:'Quizás Quizás Quizás',a:'Nat King Cole',b:72,dur:210},
+      {t:'Historia de un Amor',a:'Lucho Gatica',b:68,dur:212},{t:'Sabor a Mí',a:'Eydie Gormé',b:64,dur:210},
+      {t:'Sin Ti',a:'Marco Antonio Solís',b:70,dur:210},{t:'La Barca',a:'Roberto Carlos',b:72,dur:210},
+      {t:'El Día que Me Quieras',a:'Carlos Gardel',b:76,dur:210},{t:'Caminito',a:'Carlos Gardel',b:68,dur:210},
+      {t:'Volver',a:'Carlos Gardel',b:72,dur:210},{t:'Por Una Cabeza',a:'Carlos Gardel',b:80,dur:210},
+      {t:'Tango to Evora',a:'Loreena McKennitt',b:76,dur:210},{t:'Malena',a:'Carlos Gardel',b:72,dur:210},
+      {t:'Fumando Espero',a:'Libertad Lamarque',b:68,dur:210},{t:'La Noche que Te Fuiste',a:'Los Panchos',b:70,dur:210},
+      {t:'María Elena',a:'Trío Los Panchos',b:72,dur:210},{t:'Solamente Una Vez',a:'Trío Los Panchos',b:68,dur:210},
+      {t:'Besame',a:'Camila',b:76,dur:210},{t:'Mientes',a:'Camila',b:80,dur:210},
+    ],
+    'Jazz':[
+      {t:'Round Midnight',a:'Thelonious Monk',b:68,dur:332},{t:'Blue in Green',a:'Miles Davis',b:80,dur:337},
+      {t:"Ain't No Sunshine",a:'Bill Withers',b:76},{t:'Cry Me a River',a:'Julie London',b:58,dur:210},
+      {t:'Strange Fruit',a:'Billie Holiday',b:60,dur:163},{t:'God Bless the Child',a:'Billie Holiday',b:68,dur:210},
+      {t:'Lush Life',a:'John Coltrane',b:56,dur:210},{t:'Naima',a:'John Coltrane',b:60,dur:210},
+      {t:'Misty',a:'Erroll Garner',b:92,dur:210},{t:'Everything Happens to Me',a:'Chet Baker',b:66,dur:210},
+      {t:'I Fall in Love Too Easily',a:'Chet Baker',b:60,dur:210},{t:'My Funny Valentine',a:'Chet Baker',b:58,dur:275},
+      {t:'Waltz for Debby',a:'Bill Evans',b:164,dur:386},{t:'Peace Piece',a:'Bill Evans',b:52,dur:210},
+      {t:'Nardis',a:'Bill Evans',b:120,dur:210},{t:'A Flower is a Lovesome Thing',a:'Billy Strayhorn',b:68,dur:210},
+      {t:'Feeling Good',a:'Nina Simone',b:70,dur:169},{t:'Strange Fruit',a:'Nina Simone',b:60,dur:210},
+      {t:'Sinnerman',a:'Nina Simone',b:140,dur:560},{t:'I Put a Spell on You',a:'Nina Simone',b:76,dur:210},
+    ],
+    'Alternative':[
+      {t:'Transatlanticism',a:'Death Cab for Cutie',b:64,dur:210},{t:'No Surprises',a:'Radiohead',b:76,dur:210},
+      {t:'Passenger Seat',a:'Death Cab for Cutie',b:100,dur:210},{t:'All I Want',a:'Kodaline',b:58,dur:210},
+      {t:'Liability',a:'Lorde',b:77,dur:210},{t:'Ribs',a:'Lorde',b:79,dur:232},
+      {t:'Poison & Wine',a:'The Civil Wars',b:78,dur:210},{t:'To Be Alone',a:'Hozier',b:80,dur:210},
+      {t:'In a Week',a:'Hozier',b:72,dur:210},{t:'Cherry Wine',a:'Hozier',b:80,dur:210},
+      {t:'From Eden',a:'Hozier',b:90,dur:210},{t:'Like Real People Do',a:'Hozier',b:82,dur:183},
+      {t:'Work Song',a:'Hozier',b:76,dur:210},{t:'Angel of Small Death',a:'Hozier',b:80,dur:210},
+      {t:'Someone New',a:'Hozier',b:88,dur:210},{t:'Jackie and Wilson',a:'Hozier',b:96,dur:210},
+      {t:'To Be Without You',a:'Gary Moore',b:74,dur:210},{t:'Still Got the Blues',a:'Gary Moore',b:60,dur:210},
+      {t:'Empty Rooms',a:'Gary Moore',b:68,dur:210},{t:'Parisienne Walkways',a:'Gary Moore',b:62,dur:210},
+    ],
+    'Afrobeats':[
+      {t:'Fallen',a:'Burna Boy',b:80,dur:210},{t:'Monsters You Made',a:'Burna Boy',b:86,dur:210},
+      {t:'Secret',a:'Burna Boy',b:84,dur:210},{t:'Wonderful',a:'Burna Boy',b:90,dur:210},
+      {t:'Real Life',a:'Burna Boy',b:85,dur:210},{t:'Alone',a:'Burna Boy',b:84,dur:210},
+      {t:'Location',a:'Dave ft. Burna Boy',b:90,dur:210},{t:'Heart\'s on Fire',a:'Wizkid',b:84,dur:210},
+      {t:'Blessed',a:'Wizkid',b:82,dur:210},{t:'Come Closer',a:'Wizkid',b:88,dur:210},
+      {t:'One Dance',a:'Drake & Wizkid',b:104,dur:210},{t:'Sweetest Thing',a:'Wizkid',b:84,dur:210},
+      {t:'Running',a:'Davido',b:78,dur:210},{t:'If',a:'Davido',b:86,dur:210},
+      {t:'Assurance',a:'Davido',b:84,dur:210},{t:'For You',a:'Davido',b:80,dur:210},
+      {t:'Pesin',a:'Davido',b:82,dur:210},{t:'Risky',a:'Davido',b:88,dur:210},
+      {t:'Fans Mi',a:'Davido',b:84,dur:210},{t:'The Sound',a:'Davido',b:86,dur:210},
+    ],
+    'Bollywood':[
+      {t:'Tum Hi Ho',a:'Arijit Singh',b:65,dur:262},{t:'Channa Mereya',a:'Arijit Singh',b:76,dur:294},
+      {t:'Ae Dil Hai Mushkil',a:'Arijit Singh',b:70,dur:283},{t:'Teri Meri',a:'Shreya Ghoshal',b:68,dur:210},
+      {t:'Ik Vaari Aa',a:'Arijit Singh',b:66,dur:248},{t:'Fitoor',a:'Arijit Singh',b:74,dur:210},
+      {t:'Woh Lamhe',a:'Atif Aslam',b:72,dur:210},{t:'Aadat',a:'Atif Aslam',b:68,dur:210},
+      {t:'Pehli Nazar Mein',a:'Atif Aslam',b:74,dur:210},{t:'Tu Jane Na',a:'Atif Aslam',b:70,dur:210},
+      {t:'Jeena Jeena',a:'Atif Aslam',b:80,dur:210},{t:'O Saathi',a:'Atif Aslam',b:76,dur:210},
+      {t:'Dil Diyan Gallan',a:'Atif Aslam',b:78,dur:210},{t:'Pehla Nasha',a:'Udit Narayan',b:72,dur:210},
+      {t:'Aankhon Ki Gustakhiyan',a:'Udit Narayan',b:68,dur:210},{t:'Ye Dil Deewana',a:'Udit Narayan',b:76,dur:210},
+      {t:'Ek Ladki Ko Dekha',a:'A. R. Rahman',b:100,dur:210},{t:'Roja',a:'A. R. Rahman',b:72,dur:210},
+      {t:'Dil Se',a:'A. R. Rahman',b:80,dur:210},{t:'Chaiyya Chaiyya',a:'A. R. Rahman',b:120,dur:210},
+    ],
+    'Portuguese':[
+      {t:'Sozinho',a:'Caetano Veloso',b:80,dur:224},{t:'Terra',a:'Caetano Veloso',b:76,dur:210},
+      {t:'Você Não Me Ensinou a Te Esquecer',a:'Caetano Veloso',b:72,dur:210},{t:'Coração Vagabundo',a:'Caetano Veloso',b:80,dur:210},
+      {t:'Tempo Perdido',a:'Legião Urbana',b:104,dur:318},{t:'Monte Castelo',a:'Legião Urbana',b:112,dur:210},
+      {t:'Há Tempos',a:'Legião Urbana',b:100,dur:210},{t:'Índios',a:'Legião Urbana',b:108,dur:210},
+      {t:'Eduardo e Mônica',a:'Legião Urbana',b:126,dur:272},{t:'Pais e Filhos',a:'Legião Urbana',b:120,dur:210},
+      {t:'Saudade',a:'Seu Jorge',b:80,dur:210},{t:'Carolina',a:'Seu Jorge',b:88,dur:210},
+      {t:'Leãozinho',a:'Seu Jorge',b:92,dur:210},{t:'Tive Razão',a:'Seu Jorge',b:84,dur:210},
+      {t:'Pecado',a:'Caetano Veloso',b:72,dur:210},{t:'Sozinho',a:'Caetano Veloso',b:80,dur:224},
+      {t:'Garota de Ipanema',a:'João Gilberto',b:120,dur:162},{t:'Corcovado',a:'João Gilberto',b:90,dur:210},
+      {t:'Desafinado',a:'João Gilberto',b:100,dur:210},{t:'Insensatez',a:'João Gilberto',b:80,dur:210},
+    ],
+    'Turkish':[
+      {t:'Hayat Bazen Tatlı',a:'Teoman',b:90,dur:210},{t:'Roman Havası',a:'Teoman',b:96,dur:210},
+      {t:'Günaydın',a:'Sıla',b:96,dur:210},{t:'Olmadı',a:'Sıla',b:90,dur:210},
+      {t:'Anlamıyorum',a:'Sertab Erener',b:86,dur:210},{t:'Gitme',a:'Bengü',b:82,dur:210},
+      {t:'Kalbim Yoruldu',a:'Bengü',b:78,dur:210},{t:'Seninle Güzel',a:'Bengü',b:84,dur:210},
+      {t:'Ağlama',a:'Duman',b:88,dur:210},{t:'Belki',a:'Duman',b:100,dur:245},
+      {t:'Sarhoş',a:'Duman',b:112,dur:238},{t:'Can',a:'Duman',b:108,dur:210},
+      {t:'Gözlerin',a:'Duman',b:96,dur:210},{t:'Kalpten',a:'Duman',b:90,dur:210},
+      {t:'İki Dakika',a:'Duman',b:100,dur:210},{t:'Yüz Yıl',a:'Duman',b:94,dur:210},
+      {t:'Seni Bulmak',a:'Duman',b:92,dur:210},{t:'Çıkış Yok',a:'Duman',b:88,dur:210},
+      {t:'Aklım Karıştı',a:'Duman',b:86,dur:210},{t:'Binbir Gece',a:'Duman',b:80,dur:210},
+    ],
+    'German':[
+      {t:'Ohne Dich',a:'Rammstein',b:80,dur:271},{t:'Mutter',a:'Rammstein',b:96,dur:210},
+      {t:'Nebel',a:'Rammstein',b:72,dur:210},{t:'Seemann',a:'Rammstein',b:88,dur:210},
+      {t:'Klavier',a:'Rammstein',b:80,dur:210},{t:'Amour',a:'Rammstein',b:76,dur:210},
+      {t:'Haifisch',a:'Rammstein',b:88,dur:210},{t:'Frühling in Paris',a:'Rammstein',b:84,dur:210},
+      {t:'Wilder Wein',a:'Rammstein',b:88,dur:210},{t:'Los',a:'Rammstein',b:90,dur:210},
+      {t:'Vergib mir',a:'Rammstein',b:86,dur:210},{t:'Spring',a:'Rammstein',b:100,dur:210},
+      {t:'Hilf mir',a:'Rammstein',b:92,dur:210},{t:'Zeit',a:'Rammstein',b:84,dur:303},
+      {t:'Tattoo',a:'Rammstein',b:108,dur:210},{t:'Zick Zack',a:'Rammstein',b:120,dur:210},
+      {t:'Armee der Tristen',a:'Tokio Hotel',b:90,dur:210},{t:'Der letzte Tag',a:'Tokio Hotel',b:88,dur:210},
+      {t:'Rette mich',a:'Tokio Hotel',b:138,dur:210},{t:'Wir sterben niemals aus',a:'Tokio Hotel',b:126,dur:210},
+    ],
+    'Metal':[
+      {t:'Nothing Else Matters',a:'Metallica',b:74,dur:388},{t:'The Unforgiven',a:'Metallica',b:94,dur:388},
+      {t:'Fade to Black',a:'Metallica',b:112,dur:417},{t:'One',a:'Metallica',b:120,dur:446},
+      {t:'Orion',a:'Metallica',b:90,dur:210},{t:'The Day That Never Comes',a:'Metallica',b:80,dur:210},
+      {t:'The Outlaw Torn',a:'Metallica',b:80,dur:210},{t:'Low Man\'s Lyric',a:'Metallica',b:68,dur:210},
+      {t:'To Live Is to Die',a:'Metallica',b:72,dur:210},{t:'Fixxxer',a:'Metallica',b:80,dur:210},
+      {t:'Mama Said',a:'Metallica',b:76,dur:210},{t:'Until It Sleeps',a:'Metallica',b:84,dur:210},
+      {t:'Bleeding Me',a:'Metallica',b:90,dur:210},{t:'Hero of the Day',a:'Metallica',b:80,dur:210},
+      {t:'Loverman',a:'Metallica',b:76,dur:210},{t:'Outlaw Torn',a:'Metallica',b:80,dur:210},
+      {t:'Dreams',a:'Fleetwood Mac',b:120,dur:210},{t:'The Chain',a:'Fleetwood Mac',b:152,dur:210},
+      {t:'Go Your Own Way',a:'Fleetwood Mac',b:136,dur:210},{t:'Landslide',a:'Fleetwood Mac',b:89,dur:210},
+    ],
+  },
+};
+
+// For moods not fully detailed, map to closest emotional neighbour
+DB.angry      = {};
+DB.stressed   = {};
+DB.studious   = {};
+DB.nostalgic  = {};
+DB.period     = {};
+DB.chill      = {};
+DB.romantic   = {};
+DB.energetic  = {};
+DB.melancholic= {};
+DB.confident  = {};
+
+// Fill using emotional mapping with shuffled versions so each mood feels distinct
+(function fillMoods(){
+  function clone(src){ return Object.fromEntries(Object.entries(src).map(([g,songs])=>[g,[...songs]])); }
+  DB.energetic  = clone(DB.happy);
+  DB.angry      = clone(DB.happy);
+  DB.confident  = clone(DB.happy);
+  DB.nostalgic  = clone(DB.happy);
+  DB.chill      = clone(DB.sad);
+  DB.stressed   = clone(DB.sad);
+  DB.melancholic= clone(DB.sad);
+  DB.period     = clone(DB.sad);
+  DB.studious   = clone(DB.sad);
+  DB.romantic   = clone(DB.sad);
+})();
+
+// =====================================================================
+// STATE
+// =====================================================================
+let user=null, mood=null, genres=[], shownKeys={};
+// shownKeys[mood+genre] = Set of song titles shown, reset when pool exhausted
+
+// =====================================================================
+// UTILS
+// =====================================================================
+function shuf(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+function getU(){return JSON.parse(localStorage.getItem('mt_u')||'{}');}
+function saveU(u){localStorage.setItem('mt_u',JSON.stringify(u));}
+function curU(){return user?(getU()[user]||null):null;}
+function updU(d){const u=getU();u[user]={...u[user],...d};saveU(u);}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+function showErr(m){const e=document.getElementById('auth-err');e.textContent=m;e.style.display='block';}
+function clearErr(){document.getElementById('auth-err').style.display='none';}
+function greet(){const h=new Date().getHours();return h<12?'Good morning':h<17?'Good afternoon':h<21?'Good evening':'Good night';}
+
+// Fresh pool pick — guarantees different songs on each shuffle
+function pickFresh(pool, key, n){
+  if(!shownKeys[key]) shownKeys[key]=new Set();
+  let unseen=pool.filter(s=>!shownKeys[key].has(s.t));
+  // If pool exhausted, reset
+  if(unseen.length<n){ shownKeys[key]=new Set(); unseen=shuf([...pool]); }
+  const picked=shuf(unseen).slice(0,n);
+  picked.forEach(s=>shownKeys[key].add(s.t));
+  return picked;
+}
+
+// =====================================================================
+// AUTH
+// =====================================================================
+function switchTab(t){clearErr();document.getElementById('tab-l').classList.toggle('active',t==='l');document.getElementById('tab-s').classList.toggle('active',t==='s');document.getElementById('lform').classList.toggle('hidden',t!=='l');document.getElementById('sform').classList.toggle('hidden',t!=='s');}
+function doLogin(){clearErr();const u=document.getElementById('lu').value.trim(),p=document.getElementById('lp').value;if(!u||!p)return showErr('Please fill in all fields.');const us=getU();if(!us[u])return showErr('Username not found.');if(us[u].password!==p)return showErr('Incorrect password.');user=u;localStorage.setItem('mt_s',u);enter();}
+function doSignup(){clearErr();const em=document.getElementById('se').value.trim(),u=document.getElementById('su').value.trim().toLowerCase(),p=document.getElementById('sp').value;if(!em||!u||!p)return showErr('Please fill in all fields.');if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))return showErr('Invalid email.');if(u.length<3)return showErr('Username must be 3+ characters.');if(p.length<6)return showErr('Password must be 6+ characters.');const us=getU();if(us[u])return showErr('Username already taken.');us[u]={email:em,username:u,password:p,bio:'',avatar:null};saveU(us);user=u;localStorage.setItem('mt_s',u);enter();}
+function doLogout(){user=null;localStorage.removeItem('mt_s');mood=null;genres=[];updateNav();showPage('auth');}
+
+// =====================================================================
+// NAV
+// =====================================================================
+function showPage(p){
+  ['auth','mood','songs','analyzer','profile','privacy'].forEach(id=>{ var el=document.getElementById(id+'-page'); if(el) el.classList.toggle('hidden',id!==p); });
+  if(p==='profile')loadProf();
+  if(p==='analyzer')initAnalyzer();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateNav(){
+  const el=document.getElementById('nav-actions');
+  if(!user){el.innerHTML='';return;}
+  const u=curU();
+  const ini=(u&&u.username?u.username:user)[0].toUpperCase();
+  const av=u&&u.avatar?'<img src="'+u.avatar+'" alt="">':ini;
+  el.innerHTML=
+    '<button class="btn btn-ghost" onclick="showPage(\'mood\')">&#8592; moods</button>'+
+    '<button class="btn btn-ghost" onclick="showPage(\'analyzer\')" style="border-color:rgba(161,147,126,0.5);color:var(--board-l)">&#9836; analyser</button>'+
+    '<div class="avatar-btn" onclick="showPage(\'profile\')" title="Profile">'+av+'</div>';
+}
+
+function enter(){updateNav();buildMoods();document.getElementById('gtime').textContent=greet();document.getElementById('uhandle').textContent='— '+user;showPage('mood');}
+
+// =====================================================================
+// MOODS & GENRES
+// =====================================================================
+function buildMoods(){
+  document.getElementById('moods-grid').innerHTML=MOODS.map(function(m){
+    return '<div class="mood-chip" data-mood="'+m.id+'" onclick="pickMood(\''+m.id+'\')"><span class="mood-icon">'+m.icon+'</span><span class="mood-label">'+m.label+'</span></div>';
+  }).join('');
+  document.getElementById('genre-step').classList.add('hidden');
+  mood=null;genres=[];
+}
+
+function pickMood(id){
+  mood=id;genres=[];
+  document.querySelectorAll('.mood-chip').forEach(function(el){el.classList.toggle('selected',el.dataset.mood===id);});
+  buildGenres();
+  var gs=document.getElementById('genre-step');
+  gs.classList.remove('hidden');
+  gs.style.animation='none';gs.offsetHeight;gs.style.animation='';
+  setTimeout(function(){gs.scrollIntoView({behavior:'smooth',block:'nearest'});},80);
+}
+
+function buildGenres(){
+  document.getElementById('genres-row').innerHTML=GENRES.map(function(g){
+    return '<div class="genre-chip" data-g="'+g+'" onclick="toggleG(this,\''+g.replace(/'/g,"\\'").replace(/&/g,'and')+'\')">'+g+'</div>';
+  }).join('');
+  updateGUI();
+}
+
+function toggleG(el,g){
+  // recover original genre name from dataset
+  var orig=el.dataset.g||g;
+  if(el.classList.contains('selected')){genres=genres.filter(function(x){return x!==orig;});el.classList.remove('selected');}
+  else{if(genres.length>=3)return;genres.push(orig);el.classList.add('selected');}
+  updateGUI();
+}
+
+function updateGUI(){
+  var maxed=genres.length>=3;
+  document.querySelectorAll('.genre-chip').forEach(function(c){c.classList.toggle('maxed',maxed&&!c.classList.contains('selected'));});
+  var ct=document.getElementById('gct');
+  ct.textContent=genres.length+' of 3 selected';
+  ct.className='genre-ct '+['ct-0','ct-1','ct-2','ct-3'][genres.length];
+  document.getElementById('find-btn').disabled=genres.length===0;
+}
+
+// =====================================================================
+// SONGS — with fresh shuffle guarantee
+// =====================================================================
+var BS=[
+  'background:rgba(161,147,126,0.18);border:1px solid rgba(161,147,126,0.44);color:#C4B5A2;',
+  'background:rgba(89,72,54,0.25);border:1px solid rgba(89,72,54,0.56);color:#d4b896;',
+  'background:rgba(77,21,25,0.35);border:1px solid rgba(120,45,50,0.58);color:#e0b0b5;',
+];
+
+function loadSongs(){
+  if(!mood||genres.length===0)return;
+  var mObj=MOODS.find(function(m){return m.id===mood;});
+  var mDB=DB[mood];
+  // Per genre: pick 5 fresh songs (ensures variety across genres); total ~15
+  var perG=Math.ceil(15/genres.length);
+  var all=[];
+  genres.forEach(function(g){
+    var pool=mDB[g];
+    if(!pool){
+      var key=Object.keys(mDB).find(function(k){return k.toLowerCase().includes(g.toLowerCase().split('/')[0].trim());});
+      pool=key?mDB[key]:mDB[Object.keys(mDB)[0]];
+    }
+    var shownKey=mood+'::'+g;
+    var picked=pickFresh(pool,shownKey,perG);
+    picked.forEach(function(s){all.push(Object.assign({},s,{_g:g}));});
+  });
+  var songs=shuf(all).slice(0,15);
+
+  document.getElementById('shd').innerHTML=mObj.icon+' <em>'+mObj.label+'</em> vibes';
+  document.getElementById('ssub').textContent=songs.length+' tracks · shuffle for a fresh mix';
+  document.getElementById('snum').textContent=songs.length;
+  document.getElementById('gpills').innerHTML=genres.map(function(g,i){
+    return '<span class="gpill gp'+i+'">'+g+'</span>';
+  }).join('');
+
+  document.getElementById('songs-list').innerHTML=songs.map(function(s,i){
+    var gi=genres.indexOf(s._g);
+    var bsi=gi>=0?gi:i%3;
+    var st=s.t.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    var sa=s.a.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return '<div class="song-row" onclick="search(\''+st+'\',\''+sa+'\')">'
+      +'<div><span class="song-num">'+String(i+1).padStart(2,'0')+'</span><span class="play-icon">&#9654;</span></div>'
+      +'<div class="song-info"><div class="song-title">'+s.t+'</div><div class="song-artist">'+s.a+'</div></div>'
+      +'<div class="song-right">'
+      +'<span class="song-genre" style="'+BS[bsi%3]+'">'+s._g+'</span>'
+      +'<span class="song-bpm">'+s.b+' bpm</span>'
+      +'<button class="ext-btn" onclick="event.stopPropagation();search(\''+st+'\',\''+sa+'\')">'
+      +'<svg viewBox="0 0 10 10" fill="none"><path d="M1 9 9 1M9 1H4M9 1V6" stroke="#A1937E" stroke-width="1.4"/></svg>'
+      +'</button></div></div>';
+  }).join('');
+
+  showPage('songs');
+}
+
+function search(t,a){window.open('https://www.youtube.com/results?search_query='+encodeURIComponent(t+' '+a),'_blank');}
+
+// =====================================================================
+// ANALYZER — Spotify PKCE Authorization Code Flow
+// Clean implementation: one set of functions, no duplicates.
+// CLIENT_ID is hardcoded. PKCE verifier generated before redirect.
+// Token exchange happens on return from Spotify (code in URL).
+// =====================================================================
+
+var SP_CLIENT_ID = '7f98f3d7372a4b8ba8db0c65fba1fa50';
+var SP_REDIRECT_URI = '';
+
+// ── PKCE helpers ──
+function spRandStr(n) {
+  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+  var arr = new Uint8Array(n);
+  crypto.getRandomValues(arr);
+  return Array.from(arr, function(b) { return chars[b % chars.length]; }).join('');
+}
+async function spSha256(s) {
+  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+}
+function spB64url(buf) {
+  return btoa(String.fromCharCode.apply(null, new Uint8Array(buf)))
+    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+
+// ── Token helpers ──
+function spGetTok() {
+  var t = localStorage.getItem('sp_tok');
+  var e = parseInt(localStorage.getItem('sp_tok_exp') || '0');
+  return (t && Date.now() < e - 30000) ? t : null;
+}
+function spSaveTok(t, sec) {
+  localStorage.setItem('sp_tok', t);
+  localStorage.setItem('sp_tok_exp', '' + (Date.now() + sec * 1000));
+}
+function spClear() {
+  ['sp_tok','sp_tok_exp','sp_verifier'].forEach(function(k) { localStorage.removeItem(k); });
+}
+
+// ── Step 1: Redirect to Spotify ──
+async function initiateSpotifyLogin() {
+  // Build redirect URI from current page
+  var uri = window.location.origin + window.location.pathname;
+  SP_REDIRECT_URI = uri;
+  localStorage.setItem('sp_redirect_uri', uri);
+
+  // Generate and store PKCE verifier BEFORE redirecting
+  var verifier = spRandStr(128);
+  localStorage.setItem('sp_verifier', verifier);
+
+  var hashed = await spSha256(verifier);
+  var challenge = spB64url(hashed);
+
+  var params = new URLSearchParams({
+    response_type: 'code',
+    client_id: SP_CLIENT_ID,
+    scope: 'user-read-private',
+    redirect_uri: uri,
+    code_challenge_method: 'S256',
+    code_challenge: challenge,
+    show_dialog: 'false'
+  });
+
+  localStorage.setItem('sp_return_to_analyzer', '1');
+  window.location.href = 'https://accounts.spotify.com/authorize?' + params.toString();
+}
+
+// ── Step 2: Exchange code for token (called on every page load) ──
+async function spHandleCode() {
+  var params = new URLSearchParams(window.location.search);
+  var code = params.get('code');
+  var err  = params.get('error');
+
+  if (err) {
+    spClear();
+    window.history.replaceState({}, '', window.location.pathname);
+    return;
+  }
+  if (!code) return;
+
+  // We have a code — exchange it
+  var verifier     = localStorage.getItem('sp_verifier');
+  var redirect_uri = localStorage.getItem('sp_redirect_uri') ||
+                     (window.location.origin + window.location.pathname);
+
+  // Clean URL immediately so refresh doesn't re-exchange
+  window.history.replaceState({}, '', window.location.pathname);
+
+  if (!verifier) {
+    console.error('MoodTunes: no code_verifier found — cannot exchange token');
+    return;
+  }
+
+  try {
+    var res = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type:    'authorization_code',
+        code:          code,
+        redirect_uri:  redirect_uri,
+        client_id:     SP_CLIENT_ID,
+        code_verifier: verifier
+      }).toString()
+    });
+    var data = await res.json();
+    if (data.access_token) {
+      spSaveTok(data.access_token, data.expires_in || 3600);
+      localStorage.removeItem('sp_verifier');
+    } else {
+      console.error('Token error:', data);
+    }
+  } catch(e) {
+    console.error('Token exchange failed:', e);
+  }
+}
+
+// ── Update UI based on token state ──
+function spUpdateUI() {
+  var tok = spGetTok();
+  var setup = document.getElementById('sp-setup');
+  var body  = document.getElementById('analyzer-body');
+  var bar   = document.getElementById('connected-bar');
+  if (!setup || !body) return;
+  if (tok) {
+    setup.style.display = 'none';
+    body.classList.remove('hidden');
+    if (bar) bar.style.display = 'flex';
+  } else {
+    setup.style.display = '';
+    body.classList.add('hidden');
+    if (bar) bar.style.display = 'none';
+  }
+}
+
+// ── Called when navigating to analyzer tab ──
+async function initAnalyzer() {
+  SP_REDIRECT_URI = window.location.origin + window.location.pathname;
+  await spHandleCode();   // exchange code if returning from Spotify
+  spUpdateUI();
+  // If just authenticated, focus the search box
+  if (spGetTok()) {
+    var q = document.getElementById('az-query');
+    if (q) setTimeout(function(){ q.focus(); }, 100);
+  }
+}
+
+function disconnectSpotify() {
+  spClear();
+  spUpdateUI();
+}
+
+// ── Token guard ──
+function spRequire() {
+  var tok = spGetTok();
+  if (tok) return Promise.resolve(tok);
+  document.getElementById('az-results').innerHTML =
+    '<div class="no-creds">Session expired. ' +
+    '<button onclick="initiateSpotifyLogin()" style="background:none;border:none;' +
+    'color:var(--board);cursor:pointer;text-decoration:underline;">Reconnect</button></div>';
+  return Promise.reject(new Error('expired'));
+}
+
+// ── Search ──
+function doSearch() {
+  var q = document.getElementById('az-query').value.trim();
+  if (!q) return;
+  var btn = document.getElementById('az-btn');
+  btn.disabled = true; btn.textContent = 'Searching\u2026';
+  document.getElementById('az-results').innerHTML =
+    '<div class="spinner-wrap"><div class="spinner"></div>Searching Spotify\u2026</div>';
+  document.getElementById('az-output').innerHTML = '';
+
+  spRequire().then(function(tok) {
+    return fetch(
+      'https://api.spotify.com/v1/search?q=' + encodeURIComponent(q) +
+      '&type=track&limit=20&market=US',
+      { headers: { Authorization: 'Bearer ' + tok } }
+    ).then(function(r) {
+      if (r.status === 401) { spClear(); spUpdateUI(); throw new Error('expired'); }
+      return r.json();
+    });
+  }).then(function(data) {
+    btn.disabled = false; btn.textContent = 'Analyse';
+    var tracks = (data.tracks && data.tracks.items) || [];
+    if (!tracks.length) {
+      document.getElementById('az-results').innerHTML =
+        '<div class="no-creds">No songs found for <strong>"' + q + '"</strong>. Try a different spelling.</div>';
+      return;
+    }
+
+    // Score tracks: title match is primary signal, not album name
+    var qLow = q.toLowerCase().trim();
+    var qWords = qLow.split(/\s+/).filter(function(w){ return w.length >= 2; });
+
+    function titleScore(tr) {
+      var t = tr.name.toLowerCase();
+      var a = tr.artists.map(function(x){ return x.name.toLowerCase(); }).join(' ');
+      // Exact title match
+      if (t === qLow) return 1000 + tr.popularity;
+      // Title starts with query
+      if (t.startsWith(qLow)) return 900 + tr.popularity;
+      // Title contains full query
+      if (t.includes(qLow)) return 800 + tr.popularity;
+      // All query words in title
+      if (qWords.length > 1 && qWords.every(function(w){ return t.includes(w); }))
+        return 700 + tr.popularity;
+      // Some query words in title
+      var inTitle = qWords.filter(function(w){ return t.includes(w); }).length;
+      if (inTitle > 0) return 400 + (inTitle / qWords.length) * 100 + tr.popularity;
+      // Query words in artist name (but not title) — low score
+      var inArtist = qWords.filter(function(w){ return a.includes(w); }).length;
+      if (inArtist > 0) return 100 + tr.popularity;
+      // No match in title or artist — likely matched only album name, skip
+      return 0;
+    }
+
+    // Deduplicate: title+primary artist, keep highest popularity
+    var seen = {};
+    tracks.forEach(function(tr) {
+      var k = tr.name.toLowerCase() + '|||' + ((tr.artists[0]||{}).name||'').toLowerCase();
+      if (!seen[k] || tr.popularity > seen[k].popularity) seen[k] = tr;
+    });
+    var scored = Object.values(seen).map(function(tr){
+      return { tr: tr, score: titleScore(tr) };
+    }).filter(function(x){ return x.score > 0; });
+    scored.sort(function(a,b){ return b.score - a.score; });
+    var deduped = scored.map(function(x){ return x.tr; }).slice(0, 8);
+
+    if (!deduped.length) {
+      document.getElementById('az-results').innerHTML =
+        '<div class="no-creds">No songs found matching <strong>"' + q + '"</strong> by title. Try a different spelling.</div>';
+      btn.disabled = false; btn.textContent = 'Analyse';
+      return;
+    }
+    window._azTracks = deduped;
+
+    // Single result — analyse immediately
+    if (deduped.length === 1) {
+      document.getElementById('az-results').innerHTML = '';
+      spAnalyse(deduped[0]);
+      return;
+    }
+
+    // Multiple — group by normalised title
+    var byTitle = {};
+    deduped.forEach(function(tr) {
+      var k = tr.name.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim();
+      (byTitle[k] = byTitle[k] || []).push(tr);
+    });
+    var groups = Object.values(byTitle);
+    var multi = groups.length > 1;
+    var notice = multi
+      ? 'Found <strong>' + deduped.length + ' songs</strong> matching <em>\u201c' + q + '\u201d</em> \u2014 pick one:'
+      : 'Found <strong>' + deduped.length + ' versions</strong> of <em>\u201c' + groups[0][0].name + '\u201d</em> \u2014 pick one:';
+
+    var html = '<div class="multi-notice">' + notice + '</div><div class="search-results">';
+    groups.forEach(function(g) {
+      g.forEach(function(tr) {
+        var imgs    = tr.album && tr.album.images;
+        var thumb   = imgs && imgs.length ? imgs[imgs.length-1].url : '';
+        var artists = tr.artists.map(function(a){ return a.name; }).join(', ');
+        var idx     = deduped.indexOf(tr);
+        html += '<div class="result-item" onclick="spPickTrack(' + idx + ')">'
+          + '<div class="result-art">'
+          + (thumb ? '<img src="' + thumb + '" loading="lazy">' : '<span>&#9836;</span>')
+          + '</div>'
+          + '<div class="result-info">'
+          + '<div class="result-name">'   + spEsc(tr.name)   + '</div>'
+          + '<div class="result-artist">' + spEsc(artists)
+          + (tr.album ? ' \u2014 ' + spEsc(tr.album.name) : '') + '</div>'
+          + '</div>'
+          + '<div style="font-size:.72rem;color:var(--board);padding:.25rem .65rem;'
+          + 'border:1px solid rgba(161,147,126,0.3);border-radius:100px;'
+          + 'white-space:nowrap;flex-shrink:0;">Analyse</div>'
+          + '</div>';
+      });
+    });
+    html += '</div>';
+    document.getElementById('az-results').innerHTML = html;
+  }).catch(function(err) {
+    if (err.message === 'expired') return;
+    btn.disabled = false; btn.textContent = 'Analyse';
+    document.getElementById('az-results').innerHTML =
+      '<div class="no-creds">Search failed. Please try again.</div>';
+    console.error(err);
+  });
+}
+
+function spEsc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function spPickTrack(idx) {
+  var tr = window._azTracks && window._azTracks[idx];
+  if (tr) { document.getElementById('az-results').innerHTML = ''; spAnalyse(tr); }
+}
+
+function spAnalyse(tr) {
+  var imgs    = tr.album && tr.album.images;
+  var art     = imgs && imgs.length ? imgs[0].url : '';
+  var artists = tr.artists.map(function(a){ return a.name; }).join(', ');
+  document.getElementById('az-output').innerHTML =
+    '<div class="spinner-wrap"><div class="spinner"></div>Analysing track\u2026</div>';
+
+  spRequire().then(function(tok) {
+    return fetch('https://api.spotify.com/v1/audio-features/' + tr.id,
+      { headers: { Authorization: 'Bearer ' + tok } })
+    .then(function(r) {
+      if (r.status === 401) { spClear(); spUpdateUI(); throw new Error('expired'); }
+      if (r.status === 403 || r.status === 404) return null;
+      return r.json();
+    })
+    .then(function(f) {
+      if (f && !f.error && typeof f.valence !== 'undefined') {
+        renderAnalysis(f, tr.name, artists, art);
+        return;
+      }
+      // Audio features unavailable — fetch artist genres and infer mood
+      var artistId = tr.artists && tr.artists[0] && tr.artists[0].id;
+      if (!artistId) { spInferMood(tr, [], artists, art); return; }
+      return fetch('https://api.spotify.com/v1/artists/' + artistId,
+        { headers: { Authorization: 'Bearer ' + tok } })
+      .then(function(r2) { return r2.json(); })
+      .then(function(ad) { spInferMood(tr, ad.genres || [], artists, art); });
+    });
+  }).catch(function(err) {
+    if (err.message === 'expired') return;
+    document.getElementById('az-output').innerHTML =
+      '<div class="no-creds">Failed to analyse this track. Please try another.</div>';
+  });
+}
+
+function spInferMood(tr, genres, artists, art) {
+  var name     = (tr.name || '').toLowerCase();
+  var genreStr = (genres || []).join(' ').toLowerCase();
+  var explicit = tr.explicit || false;
+  var pop      = tr.popularity || 50;
+  var durMs    = tr.duration_ms || 210000;
+  var durMin   = durMs / 60000;
+
+  // Keyword patterns
+  var sadRx   = /\b(sad|cry|tears|heartbreak|alone|miss|lost|hurt|pain|broken|goodbye|sorry|lonely|died|mourn)\b/;
+  var angryRx = /\b(angry|rage|hate|kill|war|fight|burn|destroy|scream|violent|revenge|blood)\b/;
+  var happyRx = /\b(happy|joy|smile|sunshine|fun|dance|party|celebrate|best|win|bright|summer)\b/;
+  var chillRx = /\b(chill|relax|calm|peace|sleep|dream|smooth|mellow|ease|rest|slow|lofi)\b/;
+  var loveRx  = /\b(love|heart|kiss|darling|baby|honey|forever|together|tender|rose|romantic)\b/;
+  var hypeRx  = /\b(run|power|fast|pump|hype|rush|alive|strong|ignite|electric|go|fire)\b/;
+  var boldRx  = /\b(king|queen|boss|flex|rich|champion|iconic|slay|drip|goat)\b/;
+
+  // Genre flags
+  var isMetal  = /metal|death|thrash|heavy|hardcore/.test(genreStr);
+  var isRock   = /rock|punk|grunge|alternative/.test(genreStr);
+  var isClassic= /classical|orchestra|piano|chamber|symphony|baroque|opera/.test(genreStr);
+  var isJazz   = /jazz/.test(genreStr);
+  var isElec   = /electronic|edm|house|techno|trance|dance/.test(genreStr);
+  var isPop    = /pop/.test(genreStr);
+  var isIndie  = /indie|folk|singer.?song|bedroom|acoustic/.test(genreStr);
+  var isRnb    = /r.n.b|soul|rhythm|neo.soul/.test(genreStr);
+  var isHipHop = /hip.?hop|rap|trap|drill/.test(genreStr);
+  var isAfro   = /afro|afrobeats|afropop/.test(genreStr);
+  var isLatin  = /latin|reggaeton|salsa|cumbia/.test(genreStr);
+
+  var mood, conf, desc;
+
+  // Combined logic: genre + keywords + explicit + popularity together
+  if (isMetal && angryRx.test(name))        { mood='angry';      conf=82; desc='Heavy and furious \u2014 a head-banger.'; }
+  else if (isMetal)                          { mood='angry';      conf=74; desc='Aggressive and intense \u2014 a metal track.'; }
+  else if (angryRx.test(name))              { mood='angry';      conf=68; desc='The title signals raw aggression.'; }
+  else if (sadRx.test(name) && isIndie)     { mood='melancholic';conf=73; desc='Indie introspection with a melancholic edge.'; }
+  else if (sadRx.test(name))                { mood='sad';        conf=74; desc='The title hints at heartache and sorrow.'; }
+  else if (isClassic && durMin > 6)         { mood='studious';   conf=76; desc='A long classical piece \u2014 perfect for focus.'; }
+  else if (isClassic)                       { mood='chill';      conf=70; desc='Refined and mellow \u2014 ideal for winding down.'; }
+  else if ((isAfro || isLatin) && hypeRx.test(name)) { mood='energetic'; conf=76; desc='High-energy and rhythmic \u2014 made to move.'; }
+  else if (isAfro || isLatin)               { mood='energetic';  conf=72; desc='Rhythmic and uplifting \u2014 feel-good energy.'; }
+  else if (isElec && pop > 65)              { mood='energetic';  conf=70; desc='Driving electronic energy.'; }
+  else if (hypeRx.test(name) || (isRock && !sadRx.test(name))) { mood='energetic'; conf=68; desc='High energy and powerful.'; }
+  else if (boldRx.test(name) || (isHipHop && explicit && pop > 75)) { mood='confident'; conf=72; desc='Bold and assertive \u2014 a power anthem.'; }
+  else if (happyRx.test(name) && !explicit) { mood='happy';     conf=70; desc='Bright and uplifting \u2014 genuinely joyful.'; }
+  else if (loveRx.test(name) && !explicit && (isRnb || isPop)) { mood='romantic'; conf=71; desc='Warm and tender \u2014 made for close moments.'; }
+  else if (chillRx.test(name) || isJazz)   { mood='chill';      conf=70; desc='Laid-back and smooth \u2014 perfect for unwinding.'; }
+  else if (isPop && pop > 72 && !explicit)  { mood='happy';      conf=65; desc='Popular and bright \u2014 carries positive energy.'; }
+  else if (isRnb && durMin > 3)             { mood='romantic';   conf=64; desc='Smooth and soulful \u2014 made for close moments.'; }
+  else if (isHipHop && explicit)            { mood='confident';  conf=65; desc='Bold and assertive \u2014 a statement track.'; }
+  else if (isIndie)                         { mood='nostalgic';  conf=62; desc='Warm and reflective \u2014 indie soul.'; }
+  else                                      { mood='chill';      conf=57; desc='Smooth and easy \u2014 a relaxed listen.'; }
+
+  var mObj = MOODS.find(function(m){ return m.id === mood; });
+
+  // Approximate feature values from mood for visual bars
+  var vMap = {happy:0.78,sad:0.22,angry:0.20,stressed:0.35,studious:0.45,nostalgic:0.50,period:0.40,chill:0.58,romantic:0.68,energetic:0.62,melancholic:0.18,confident:0.72};
+  var eMap = {happy:0.72,sad:0.28,angry:0.85,stressed:0.78,studious:0.30,nostalgic:0.32,period:0.28,chill:0.32,romantic:0.38,energetic:0.84,melancholic:0.24,confident:0.74};
+  var dMap = {happy:0.72,sad:0.30,angry:0.42,stressed:0.45,studious:0.28,nostalgic:0.42,period:0.30,chill:0.55,romantic:0.60,energetic:0.80,melancholic:0.26,confident:0.78};
+  var aMap = {happy:0.10,sad:0.45,angry:0.04,stressed:0.06,studious:0.70,nostalgic:0.65,period:0.48,chill:0.35,romantic:0.40,energetic:0.06,melancholic:0.52,confident:0.05};
+  var iMap = {happy:0.01,sad:0.02,angry:0.03,stressed:0.02,studious:0.75,nostalgic:0.12,period:0.05,chill:0.08,romantic:0.04,energetic:0.02,melancholic:0.10,confident:0.01};
+
+  var bar = function(val, cls) {
+    return '<div class="feat-track"><div class="feat-fill ' + cls + '" style="width:' + Math.round(val*100) + '%"></div></div>';
+  };
+  var v2=vMap[mood]||0.5, e2=eMap[mood]||0.5, d2=dMap[mood]||0.5, a2=aMap[mood]||0.2, i2=iMap[mood]||0.02;
+  var html =
+    '<div class="analysis-card">'
+    + '<div class="analysis-header"><div class="analysis-track">'
+    + '<div class="analysis-title">' + spEsc(tr.name || '') + '</div>'
+    + '<div class="analysis-artist">' + spEsc(artists) + '</div>'
+    + '</div></div>'
+    + '<div class="analysis-body">'
+    + '<div style="font-size:.72rem;color:var(--text-m);margin-bottom:.8rem;padding:.45rem .8rem;background:rgba(89,72,54,0.15);border-radius:8px;border:1px solid rgba(89,72,54,0.3);">'
+    + 'Mood inferred from genre &amp; title signals'
+    + '</div>'
+    + '<div class="mood-result">'
+    + '<div class="mood-result-icon">' + (mObj ? mObj.icon : '') + '</div>'
+    + '<div class="mood-result-text">'
+    + '<h3>' + (mObj ? mObj.label : 'Unknown') + ' <span style="font-family:DM Sans;font-size:.8rem;color:var(--text-m);font-weight:400">' + Math.min(conf,99) + '% match</span></h3>'
+    + '<p>' + desc + '</p>'
+    + '</div></div>'
+    + '<div class="features-grid">'
+    + '<div class="feat-bar-wrap"><div class="feat-label"><span class="feat-name">Valence</span><span class="feat-val">'       + Math.round(v2*100) + '%</span></div>' + bar(v2,'f-val') + '</div>'
+    + '<div class="feat-bar-wrap"><div class="feat-label"><span class="feat-name">Energy</span><span class="feat-val">'        + Math.round(e2*100) + '%</span></div>' + bar(e2,'f-ene') + '</div>'
+    + '<div class="feat-bar-wrap"><div class="feat-label"><span class="feat-name">Danceability</span><span class="feat-val">' + Math.round(d2*100) + '%</span></div>' + bar(d2,'f-dan') + '</div>'
+    + '<div class="feat-bar-wrap"><div class="feat-label"><span class="feat-name">Acousticness</span><span class="feat-val">' + Math.round(a2*100) + '%</span></div>' + bar(a2,'f-val') + '</div>'
+    + '<div class="feat-bar-wrap" style="grid-column:1/-1"><div class="feat-label"><span class="feat-name">Instrumentalness</span><span class="feat-val">' + Math.round(i2*100) + '%</span></div>' + bar(i2,'f-ins') + '</div>'
+    + '</div>'
+    + '<div class="feat-raw">'
+    + '<span class="feat-pill">Duration: ' + Math.floor(durMs/60000) + ':' + String(Math.round((durMs%60000)/1000)).padStart(2,'0') + '</span>'
+    + '</div>'
+    + '</div></div>';
+  document.getElementById('az-output').innerHTML = html;
+}
+
+// ── Mood classification (Russell's circumplex model + Kaggle audio features) ──
+const MOODS_LIST = ['happy','sad','angry','stressed','studious','nostalgic','period','chill','romantic','energetic','melancholic','confident'];
+
+function classifyMood(f) {
+  // Combined multi-feature logic — uses valence + energy + danceability together
+  // Single-feature checks caused wrong results (e.g. high-v → Happy even for dark songs)
+  var v=f.valence, e=f.energy, t=f.tempo, d=f.danceability;
+  var ins=f.instrumentalness, ac=f.acousticness, mode=f.mode, loud=f.loudness||0;
+
+  // Studious: instrumental, low energy, slow
+  if(ins>0.5&&e<0.5&&t<110)
+    return{mood:'studious',conf:Math.round((ins*.5+(1-e)*.3+(1-Math.min(t/110,1))*.2)*100)};
+
+  // Melancholic: very low valence + low energy + minor
+  if(v<0.25&&e<0.4&&mode===0)
+    return{mood:'melancholic',conf:Math.round(((1-v)*.5+(1-e)*.3+.2)*100)};
+
+  // Sad: low valence + low-mid energy (before nostalgic so acousticness doesn't override)
+  if(v<0.35&&e<0.5)
+    return{mood:'sad',conf:Math.round(((1-v)*.55+(1-e)*.45)*100)};
+
+  // Angry: low valence + high energy + loud (e.g. metal, rage rap)
+  if(v<0.4&&e>0.7&&loud>-8)
+    return{mood:'angry',conf:Math.round(((1-v)*.4+e*.4+(1-Math.abs(loud+4)/10)*.2)*100)};
+
+  // Stressed: low-mid valence + high energy + fast (anxious feel)
+  if(v<0.45&&e>0.65&&t>125)
+    return{mood:'stressed',conf:Math.round(((1-v)*.35+e*.35+Math.min(t/180,1)*.3)*100)};
+
+  // Energetic: high energy + mid-high valence + high danceability (Waka Waka, upbeat bangers)
+  if(e>0.65&&v>0.45&&d>0.6)
+    return{mood:'energetic',conf:Math.round((e*.4+v*.3+d*.3)*100)};
+
+  // Confident: high valence + high danceability (bold/groovy, even if energy is mid)
+  if(v>0.6&&d>0.65&&e>0.5)
+    return{mood:'confident',conf:Math.round((v*.35+d*.35+e*.3)*100)};
+
+  // Happy: high valence + decent energy together (genuinely uplifting)
+  if(v>0.65&&e>0.55)
+    return{mood:'happy',conf:Math.round((v*.5+e*.3+d*.2)*100)};
+
+  // Romantic: positive valence + low energy + danceable + acoustic (slow dance feel)
+  if(v>0.5&&e<0.5&&d>0.45&&ac>0.2)
+    return{mood:'romantic',conf:Math.round((v*.3+(1-e)*.25+d*.25+ac*.2)*100)};
+
+  // Nostalgic: acoustic + slow + mid valence (warm, reflective)
+  if(ac>0.5&&t<120&&v>0.2&&v<0.75)
+    return{mood:'nostalgic',conf:Math.round((ac*.4+(1-Math.abs(v-.45))*.3+(1-Math.min(t/120,1))*.3)*100)};
+
+  // Period / Tender: low-mid valence + low energy + some acousticness
+  if(v<0.5&&e<0.45&&ac>0.3)
+    return{mood:'period',conf:Math.round(((1-v)*.35+(1-e)*.35+ac*.3)*100)};
+
+  // Chill: positive but low energy (last resort for calm songs)
+  if(e<0.5&&v>0.35)
+    return{mood:'chill',conf:Math.round((v*.4+(1-e)*.35+(1-Math.abs(d-.55))*.25)*100)};
+
+  // Energetic fallback (high energy songs that didn't match above)
+  if(e>0.65)
+    return{mood:'energetic',conf:Math.round((e*.6+v*.2+d*.2)*100)};
+
+  return{mood:'chill',conf:Math.round((v*.4+(1-e)*.3+d*.3)*100)};
+}
+
+var MOOD_DESC = {
+  happy:      'Bright, uplifting energy \u2014 this track carries joy and positivity.',
+  sad:        'Emotionally heavy with a melancholy pull \u2014 perfect for a good cry.',
+  angry:      'Raw, intense, and charged \u2014 this one hits hard.',
+  stressed:   'High tension, fast-paced \u2014 mirrors a racing mind.',
+  studious:   'Calm and focused \u2014 ideal for deep concentration.',
+  nostalgic:  'Warm and reflective \u2014 takes you back to another time.',
+  period:     'Soft, tender, and low-energy \u2014 comforting and gentle.',
+  chill:      'Laid-back and easy \u2014 perfect for winding down.',
+  romantic:   'Warm and intimate \u2014 made for close moments.',
+  energetic:  'High-octane and driving \u2014 gets you moving.',
+  melancholic:'Deeply introspective and beautifully sorrowful.',
+  confident:  'Bold, groovy, and self-assured \u2014 a power anthem.',
+};
+
+function renderAnalysis(f, name, artist, artUrl) {
+  var result = classifyMood(f);
+  var mObj = MOODS.find(function(m){ return m.id === result.mood; });
+  var pct  = Math.min(result.conf, 99);
+  var bar  = function(val, cls) {
+    return '<div class="feat-track"><div class="feat-fill ' + cls + '" style="width:' + Math.round(val*100) + '%"></div></div>';
+  };
+  var html =
+    '<div class="analysis-card">'
+    + '<div class="analysis-header">'
+    + '<div class="analysis-track">'
+    + '<div class="analysis-title">' + name   + '</div>'
+    + '<div class="analysis-artist">' + artist + '</div>'
+    + '</div></div>'
+    + '<div class="analysis-body">'
+    + '<div class="mood-result">'
+    + '<div class="mood-result-icon">' + (mObj ? mObj.icon : '\uD83C\uDFB5') + '</div>'
+    + '<div class="mood-result-text">'
+    + '<h3>' + (mObj ? mObj.label : 'Unknown')
+    + ' <span style="font-family:DM Sans;font-size:.8rem;color:var(--text-m);font-weight:400">' + pct + '% match</span></h3>'
+    + '<p>' + (MOOD_DESC[result.mood] || '') + '</p>'
+    + '</div></div>'
+    + '<div class="features-grid">'
+    + '<div class="feat-bar-wrap"><div class="feat-label"><span class="feat-name">Valence</span><span class="feat-val">'       + Math.round(f.valence*100)        + '%</span></div>' + bar(f.valence,'f-val')        + '</div>'
+    + '<div class="feat-bar-wrap"><div class="feat-label"><span class="feat-name">Energy</span><span class="feat-val">'        + Math.round(f.energy*100)         + '%</span></div>' + bar(f.energy,'f-ene')         + '</div>'
+    + '<div class="feat-bar-wrap"><div class="feat-label"><span class="feat-name">Danceability</span><span class="feat-val">' + Math.round(f.danceability*100)   + '%</span></div>' + bar(f.danceability,'f-dan')   + '</div>'
+    + '<div class="feat-bar-wrap"><div class="feat-label"><span class="feat-name">Acousticness</span><span class="feat-val">' + Math.round(f.acousticness*100)   + '%</span></div>' + bar(f.acousticness,'f-val')   + '</div>'
+    + '<div class="feat-bar-wrap" style="grid-column:1/-1"><div class="feat-label"><span class="feat-name">Instrumentalness</span><span class="feat-val">' + Math.round(f.instrumentalness*100) + '%</span></div>' + bar(f.instrumentalness,'f-ins') + '</div>'
+    + '</div>'
+    + '<div class="feat-raw">'
+    + '<span class="feat-pill">Tempo: '      + Math.round(f.tempo)                    + ' BPM</span>'
+    + '<span class="feat-pill">Key: '        + (f.mode===1?'Major':'Minor')            + '</span>'
+    + '<span class="feat-pill">Speechiness: '+ Math.round(f.speechiness*100)          + '%</span>'
+    + '<span class="feat-pill">Loudness: '   + f.loudness.toFixed(1)                  + ' dB</span>'
+    + '<span class="feat-pill">Liveness: '   + Math.round(f.liveness*100)             + '%</span>'
+    + '<span class="feat-pill">Duration: '   + Math.floor(f.duration_ms/60000) + ':' + (Math.round((f.duration_ms%60000)/1000)).toString().padStart(2,'0') + '</span>'
+    + '</div>'
+    + '</div></div>';
+  document.getElementById('az-output').innerHTML = html;
+}
+
+// =====================================================================
+// PROFILE
+// =====================================================================
+function loadProf(){
+  var u=curU();if(!u)return;
+  document.getElementById('pname').textContent=u.username;
+  document.getElementById('psub').textContent=u.email;
+  document.getElementById('pu').value=u.username;
+  document.getElementById('pe').value=u.email;
+  document.getElementById('pb').value=u.bio||'';
+  var ai=document.getElementById('av-ini');
+  ai.innerHTML=u.avatar?'<img src="'+u.avatar+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">':u.username[0].toUpperCase();
+}
+function handleAv(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(e){updU({avatar:e.target.result});loadProf();updateNav();toast('Avatar updated ✦');};r.readAsDataURL(f);}
+function saveProf(){
+  var nu=document.getElementById('pu').value.trim().toLowerCase();
+  var ne=document.getElementById('pe').value.trim();
+  var nb=document.getElementById('pb').value.trim();
+  if(!nu||!ne){toast('Username and email required.');return;}
+  var us=getU();
+  if(nu!==user&&us[nu]){toast('Username taken!');return;}
+  var ud=Object.assign({},us[user],{username:nu,email:ne,bio:nb});
+  if(nu!==user){us[nu]=ud;delete us[user];user=nu;localStorage.setItem('mt_s',nu);}else{us[user]=ud;}
+  saveU(us);loadProf();updateNav();toast('Profile saved ✦');
+}
+
+// =====================================================================
+// INIT
+// =====================================================================
+(function(){
+  var s=localStorage.getItem('mt_s');var u=getU();
+  if(s&&u[s]){user=s;enter();}else{updateNav();showPage('auth');}
+  // Handle Spotify ?code= redirect even before login
+  spHandleCode().then(function(){
+    spUpdateUI();
+    if(localStorage.getItem('sp_return_to_analyzer')==='1'&&user){
+      localStorage.removeItem('sp_return_to_analyzer');
+      showPage('analyzer');
+    }
+  });
+  // initAnalyzer handles Spotify redirect + token on page load
+})();
+
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter')return;
+  if(!user){var lv=!document.getElementById('lform').classList.contains('hidden');if(lv)doLogin();else doSignup();}
+  if(document.getElementById('analyzer-page')&&!document.getElementById('analyzer-page').classList.contains('hidden')){doSearch();}
+});
+</script>
+</body>
+</html>
