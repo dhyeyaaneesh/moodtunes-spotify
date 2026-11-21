@@ -179,3 +179,43 @@ class SeededGMM:
 
     def score(self, Z):
         return float(logsumexp(self._log_joint(np.asarray(Z, float)), axis=1).mean())
+
+
+# ---------------------------------------------------------------------------------------------
+# The dataset's genre tags are noisy (e.g. lots of Hindi/Tamil songs sit under "k-pop", "pop", "jazz").
+# train_model.py therefore learns a language/region ("origin") model from the tags that are reliable,
+# then uses it to clean every UI genre.
+# ---------------------------------------------------------------------------------------------
+ORIGIN_TAGS = {
+    "indian": ["indian"],
+    "turkish": ["turkish"],
+    "french": ["french"],
+    "german": ["german"],
+    "spanish": ["spanish", "salsa", "tango"],
+    "portuguese": ["brazil", "pagode", "forro", "sertanejo", "mpb", "samba"],
+    "japanese": ["j-pop", "j-rock", "j-idol", "j-dance", "anime"],
+    # tags that are (almost) always Western / English-language music
+    "western": ["country", "blues", "bluegrass", "honky-tonk", "death-metal", "black-metal", "heavy-metal",
+                "metal", "metalcore", "grindcore", "hardcore", "punk", "punk-rock", "rock-n-roll", "rockabilly",
+                "hard-rock", "psych-rock", "grunge", "goth", "emo", "industrial", "ska", "reggae", "dancehall",
+                "dub", "disco", "funk", "gospel", "show-tunes", "disney", "children", "kids", "comedy",
+                "classical", "opera", "piano", "new-age", "trip-hop", "techno", "minimal-techno",
+                "detroit-techno", "chicago-house", "drum-and-bass", "dubstep", "hardstyle", "british",
+                "swedish"],
+}
+FOREIGN = {"indian", "turkish", "french", "german", "spanish", "portuguese", "japanese"}
+
+# strict  = keep only tracks the origin model puts in this group (language-defined genres)
+# exclude = drop tracks the origin model puts in one of these groups (style-defined genres)
+UI_RULES = {g: ("exclude", FOREIGN) for g in GENRE_MAP}
+UI_RULES.update({
+    "Bollywood": ("strict", {"indian"}),
+    "Turkish": ("strict", {"turkish"}),
+    "French": ("strict", {"french"}),
+    "German": ("strict", {"german"}),
+    "Spanish": ("strict", {"spanish"}),
+    "Portuguese": ("strict", {"portuguese"}),
+    "J-Pop": ("strict", {"japanese"}),
+    "Latin": ("exclude", {"indian", "turkish", "french", "german", "japanese"}),
+    "K-Pop": ("exclude", {"indian", "turkish", "french", "german", "spanish", "portuguese"}),
+})

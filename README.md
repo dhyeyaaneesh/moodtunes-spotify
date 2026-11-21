@@ -10,6 +10,8 @@ Pick a mood and up to 3 genres and get songs that match, or search any song on S
 | **Song analyser** (audio features available) | **Mood model:** a 12-component diagonal Gaussian mixture on 8 audio features (valence, energy, danceability, acousticness, instrumentalness, tempo, loudness, speechiness), trained with EM. Every component is one mood and starts at a seed point from Russell's circumplex model; a Normal prior on each mean keeps it from drifting away from its meaning. Output = probability of each mood. |
 | **Song analyser** (Spotify returns no audio features) | The song is looked up in the dataset (title + artist) and its real audio features are used. If it is not there, an **estimate model** (logistic regression + ridge regressions on genre tokens, title words, explicit flag, popularity, duration) predicts the mood and the audio-feature bars. |
 
+**Genre cleaning.** The dataset's genre tags are noisy (many Hindi/Tamil songs sit under `k-pop`, `pop`, `jazz`, ...). `train_model.py` therefore also trains an **origin model**: character n-gram logistic regression on artist + title that learns the language/region of a track from the reliable tags (`indian`, `turkish`, `french`, `german`, `spanish`, `brazil`, `j-pop`, plus clearly Western tags). Language genres (Bollywood, Turkish, French, German, Spanish, Portuguese, J-Pop) keep only tracks of that origin, and every other genre drops tracks of a clearly foreign origin. The training printout shows how many tracks were removed from each genre and a few examples.
+
 There are **no mood labels** in the dataset, so the mood model is unsupervised (seeded EM). It is checked against Spotify's own mood-flavoured genre tags (`happy`, `sad`, `sleep`, `study`, `chill`, `romance`, `party`, `work-out`, `ambient`, `piano`, `death-metal`, ...), which are never used for training: for each tag, how well does the probability of the matching moods separate tagged tracks from the rest (AUC)? The estimate model is scored against the mood model's own labels on held-out tracks.
 
 ## Project structure
@@ -49,7 +51,8 @@ Spotify login (PKCE) for the analyser works as before; add `http://127.0.0.1:800
 
 - `every mood kept its meaning` is printed (if a `WARNING: ... drifted` line appears, a mood's centre moved closer to another mood's seed).
 - The `Validation` table: AUC well above 0.5 for the Spotify tags is a good sign.
-- The `Song catalogue` table: every UI genre should have tracks. If one shows `0`, its genre tags in `GENRE_MAP` (`core.py`) do not exist in your file.
+- The `Origin model` section: held-out accuracy and the Indian precision/recall.
+- The `Song catalogue` table: how many tracks were removed from each genre (and a few examples). Every UI genre should keep tracks. If one shows `0`, its genre tags in `GENRE_MAP` (`core.py`) do not exist in your file.
 
 ## Results
 
@@ -69,4 +72,4 @@ Interactive docs: <http://127.0.0.1:8000/docs>
 
 - Mood is subjective and the dataset has no mood labels; several moods overlap in audio space (sad / melancholic / period, happy / energetic / confident), so the model separates them softly. Percentages are model probabilities, not accuracy.
 - Spotify has restricted the audio-features endpoint for newer apps; that is why the analyser falls back to the dataset lookup and the estimate model.
-- Genre buckets are approximate (for example Bollywood uses the dataset's `indian` tag).
+- Genre buckets are approximate (for example Bollywood uses the dataset's `indian` tag). The origin model works on artist and title text only, so an occasional mixed-up track can slip through (for example a Western lofi remix inside the Indian tag).

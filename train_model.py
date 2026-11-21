@@ -13,7 +13,8 @@ Models trained
                        circumplex), gives P(mood | audio features); checked against Spotify's own mood tags
   2. Estimate model  : logistic regression + ridge regressions that guess mood and audio features from
                        genre / title / explicit / popularity / duration (used when Spotify returns no audio features)
-  3. Song catalogue  : every track scored for every mood, used for the recommendations
+  3. Origin model    : language/region of every track (char n-gram text model); cleans the mixed-up genre tags
+  4. Song catalogue  : every track scored for every mood, used for the recommendations
 """
 import json
 import sys
@@ -26,12 +27,12 @@ import pandas as pd
 from scipy.spatial.distance import cdist
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.linear_model import LogisticRegression, Ridge
-from sklearn.metrics import accuracy_score, f1_score, r2_score, roc_auc_score
+from sklearn.metrics import accuracy_score, f1_score, precision_recall_fscore_support, r2_score, roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-from core import (EDITORIAL_TAGS, GENRE_MAP, GMM_FEATURES, MOODS, SeededGMM, audio_matrix, genre_text,
-                  lookup_key, meta_matrix, prototype_matrix)
+from core import (EDITORIAL_TAGS, GENRE_MAP, GMM_FEATURES, MOODS, ORIGIN_TAGS, UI_RULES, SeededGMM,
+                  audio_matrix, genre_text, lookup_key, meta_matrix, prototype_matrix)
 
 ROOT = Path(__file__).parent
 DATA_DIR = ROOT / "data"
@@ -187,22 +188,94 @@ def train_estimate_model(trk, probs, train_idx, test_idx):
             "majority_baseline": round(float(base), 4), "feature_r2": r2}
 
 
+
 # ---------------------------------------------------------------------------
-# 3. catalogue for recommendations + lookup table for the analyser
+# 3. origin model: fixes the dataset's mixed-up genre tags
+# ---------------------------------------------------------------------------
+def train_origin_model(df, trk):
+    """Learn which language/region a track comes from (artist + title text, character n-grams),
+    using only the reliable tags. Returns trk with 'origin' and 'origin_conf' columns."""
+    t0 = step("Origin model: language/region of every track (the dataset's genre tags are mixed up)")
+    tag_to_origin = {tag: o for o, tags in ORIGIN_TAGS.items() for tag in tags}
+    lab = df[df["track_genre"].isin(tag_to_origin)][["track_id", "track_genre"]].copy()
+    lab["origin"] = lab["track_genre"].map(tag_to_origin)
+    per = lab.groupby("track_id")["origin"].agg(lambda s: s.iloc[0] if s.nunique() == 1 else None).dropna()
+    counts = per.value_counts()
+    print("    labelled tracks per origin: " + ", ".join(f"{k}={v}" for k, v in counts.items()))
+    if counts.get("indian", 0) < 100 or len(counts) < 3:
+        print("    WARNING: not enough labelled tracks for the origin model - genre cleaning skipped")
+        trk["origin"], trk["origin_conf"] = "unknown", 0.0
+        return trk, {"skipped": True}
+
+    pos = pd.Series(np.arange(len(trk)), index=trk["track_id"].values)
+    text = (trk["artists"] + " | " + trk["track_name"]).str.lower()
+    vec = TfidfVectorizer(analyzer="char_wb", ngram_range=(2, 5), min_df=3, max_features=120000,
+                          sublinear_tf=True, dtype=np.float32)
+    X = vec.fit_transform(text).tocsr()
+
+    # cap very big classes so training stays quick
+    rng = np.random.default_rng(SEED)
+    idx_by_class = {o: pos.loc[per.index[per.values == o]].values for o in counts.index}
+    lab_idx, lab_y = [], []
+    for o, ids in idx_by_class.items():
+        ids = rng.permutation(ids)[:15000]
+        lab_idx += list(ids)
+        lab_y += [o] * len(ids)
+    lab_idx, lab_y = np.array(lab_idx), np.array(lab_y)
+    tr, te = train_test_split(np.arange(len(lab_idx)), test_size=0.2, stratify=lab_y, random_state=SEED)
+    clf = LogisticRegression(C=5.0, max_iter=300, class_weight="balanced").fit(X[lab_idx[tr]], lab_y[tr])
+    pred = clf.predict(X[lab_idx[te]])
+    acc = accuracy_score(lab_y[te], pred)
+    pr, rc, f1s, _ = precision_recall_fscore_support(lab_y[te], pred, labels=clf.classes_, zero_division=0)
+    print(f"    held-out accuracy = {acc:.3f}")
+    for o, p_, r_, f_ in zip(clf.classes_, pr, rc, f1s):
+        print(f"      {o:11s} precision={p_:.2f}  recall={r_:.2f}  f1={f_:.2f}")
+
+    P = clf.predict_proba(X)
+    first = trk["artists"].str.split(";").str[0].str.lower().values
+    P_art = pd.DataFrame(P).groupby(first).transform("mean").values      # an artist's other tracks vote too
+    P = 0.5 * P + 0.5 * P_art
+    trk["origin"] = clf.classes_[P.argmax(1)]
+    trk["origin_conf"] = P.max(1)
+    done(t0)
+    return trk, {"accuracy": round(float(acc), 4),
+                 "per_origin": {o: {"precision": round(float(p_), 3), "recall": round(float(r_), 3)}
+                                for o, p_, r_ in zip(clf.classes_, pr, rc)},
+                 "labelled_tracks": {k: int(v) for k, v in counts.items()}}
+
+# ---------------------------------------------------------------------------
+# 4. catalogue for recommendations + lookup table for the analyser
 # ---------------------------------------------------------------------------
 def build_catalogue(df, trk, probs):
-    t0 = step("Song catalogue: every track scored for every mood")
+    t0 = step("Song catalogue: every track scored for every mood (after cleaning the genres)")
     pos = pd.Series(np.arange(len(trk)), index=trk["track_id"].values)
-    parts, coverage = [], {}
+    org = trk[["track_id", "origin", "origin_conf"]]
+    parts, coverage, cleaning = [], {}, {}
     for ui, tags in GENRE_MAP.items():
-        sub = df[df["track_genre"].isin(tags)]
-        sub = sub[sub["track_id"].isin(pos.index)].sort_values("popularity", ascending=False)
-        sub = sub.drop_duplicates("key")                    # same song re-released -> keep the most popular
+        kind, group = UI_RULES[ui]
+        sub = df[df["track_genre"].isin(tags) & df["track_id"].isin(pos.index)]
+        sub = sub.merge(org, on="track_id", how="left")
+        before = len(sub.drop_duplicates("track_id"))
+        if kind == "strict":
+            # also pull in tracks of this language that carry some other (wrong) genre tag
+            extra = trk[trk["origin"].isin(group) & (trk["origin_conf"] >= 0.7)]
+            sub = pd.concat([sub, extra], ignore_index=True).drop_duplicates("track_id")
+            ok = sub["origin"].isin(group) & (sub["origin_conf"] >= 0.5)
+        else:
+            ok = ~(sub["origin"].isin(group) & (sub["origin_conf"] >= 0.6))
+        removed = sub[~ok]
+        sub = sub[ok].sort_values("popularity", ascending=False).drop_duplicates("key")
         keep = sub[sub["popularity"] >= 5]
         sub = keep if len(keep) >= 200 else sub
         coverage[ui] = int(len(sub))
-        sub = sub.assign(ui_genre=ui)
-        parts.append(sub)
+        cleaning[ui] = {"tagged": int(before), "removed": int(len(removed)), "kept": int(len(sub))}
+        print(f"    {ui:12s} tagged={before:6d}  removed={len(removed):6d}  kept={len(sub):6d}"
+              + ("   <-- NO TRACKS: this genre will return nothing" if len(sub) == 0 else ""))
+        if len(removed):
+            ex = removed.sort_values("popularity", ascending=False).head(3)
+            print("        removed e.g.: " + " | ".join(f"{r.track_name[:28]} - {r.artists.split(';')[0][:18]} [{r.origin}]"
+                                                      for r in ex.itertuples()))
+        parts.append(sub.assign(ui_genre=ui))
     cat = pd.concat(parts, ignore_index=True)
     P = probs[pos.loc[cat["track_id"].values].values].astype(np.float32)
     out = pd.DataFrame({"id": cat["track_id"].values, "t": cat["track_name"].values,
@@ -211,12 +284,10 @@ def build_catalogue(df, trk, probs):
                         "pop": cat["popularity"].values, "g": cat["ui_genre"].values})
     joblib.dump(out, MODEL_DIR / "catalogue.joblib", compress=3)
     np.save(MODEL_DIR / "catalogue_P.npy", P)
-    for g, n in coverage.items():
-        print(f"    {g:12s} {n:6d} tracks" + ("   <-- NO TRACKS: this genre will return nothing" if n == 0 else ""))
     lookup = trk.drop_duplicates("key")[["key", "track_name", "artists"] + GMM_FEATURES + ["liveness", "mode", "duration_ms"]]
     joblib.dump(lookup.reset_index(drop=True), MODEL_DIR / "tracks.joblib", compress=3)
     done(t0)
-    return coverage, int(len(out)), int(len(lookup))
+    return coverage, cleaning, int(len(out)), int(len(lookup))
 
 
 def main():
@@ -235,13 +306,14 @@ def main():
     probs, mood_stats = train_mood_model(trk, train_idx, test_idx)
     tag_rows = validate_with_tags(trk, probs)
     est_stats = train_estimate_model(trk, probs, train_idx, test_idx)
-    coverage, n_cat, n_lookup = build_catalogue(df, trk, probs)
+    trk, origin_stats = train_origin_model(df, trk)
+    coverage, cleaning, n_cat, n_lookup = build_catalogue(df, trk, probs)
 
     info = {"source": path.name,
             "dataset": {"rows": int(len(df)), "unique_tracks": int(len(trk)), "genre_tags": int(df["track_genre"].nunique()),
                         "catalogue_rows": n_cat, "lookup_tracks": n_lookup},
             "moods": MOODS, "mood_model": mood_stats, "tag_validation": tag_rows,
-            "estimate_model": est_stats, "genre_coverage": coverage,
+            "estimate_model": est_stats, "origin_model": origin_stats, "genre_cleaning": cleaning, "genre_coverage": coverage,
             "notes": "There are no mood labels in the dataset. The mood model is a seeded Gaussian mixture "
                      "(unsupervised EM); it is validated against Spotify's own mood-flavoured genre tags."}
     (MODEL_DIR / "info.json").write_text(json.dumps(info, indent=1))
