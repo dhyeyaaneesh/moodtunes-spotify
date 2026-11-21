@@ -553,593 +553,23 @@ const GENRES=[
   'Afrobeats','Portuguese','Turkish','German','J-Pop',
 ];
 
-// Each entry: {t:title, a:artist, b:bpm}
-// Pool is large (20+) so shuffle always gives fresh 15
-const DB={
-  happy:{
-    'English Pop':[
-      {t:'Levitating',a:'Dua Lipa',b:103,dur:203},{t:'Good as Hell',a:'Lizzo',b:96,dur:210},
-      {t:"Can't Stop the Feeling!",a:'Justin Timberlake',b:113},{t:'Shake It Off',a:'Taylor Swift',b:160,dur:219},
-      {t:'Blinding Lights',a:'The Weeknd',b:171,dur:200},{t:'Uptown Funk',a:'Bruno Mars',b:115,dur:270},
-      {t:'Happy',a:'Pharrell Williams',b:160,dur:233},{t:'Watermelon Sugar',a:'Harry Styles',b:95,dur:174},
-      {t:'Anti-Hero',a:'Taylor Swift',b:97,dur:200},{t:'As It Was',a:'Harry Styles',b:174,dur:167},
-      {t:'Shape of You',a:'Ed Sheeran',b:96,dur:234},{t:'Sorry',a:'Justin Bieber',b:100,dur:210},
-      {t:'Cheap Thrills',a:'Sia',b:93,dur:210},{t:'Thunder',a:'Imagine Dragons',b:168,dur:210},
-      {t:'Believer',a:'Imagine Dragons',b:125,dur:210},{t:'Counting Stars',a:'OneRepublic',b:122,dur:210},
-      {t:'Shut Up and Dance',a:'WALK THE MOON',b:128,dur:210},{t:'Sugar',a:'Maroon 5',b:122,dur:210},
-      {t:'Roses',a:'The Chainsmokers',b:100,dur:210},{t:'Closer',a:'The Chainsmokers',b:95,dur:210},
-    ],
-    'Spanish':[
-      {t:'Bzrp Session #53',a:'Bizarrap & Shakira',b:98,dur:211},{t:'La Bicicleta',a:'Carlos Vives & Shakira',b:128,dur:210},
-      {t:'Bailando',a:'Enrique Iglesias',b:130,dur:270},{t:'Despacito',a:'Luis Fonsi & Daddy Yankee',b:89,dur:229},
-      {t:'Me Gusta',a:'Anitta & Cardi B',b:96,dur:210},{t:'Yo x Ti Tu x Mi',a:'ROSALÍA & Ozuna',b:90,dur:177},
-      {t:'Felices los 4',a:'Maluma',b:90,dur:210},{t:'Danza Kuduro',a:'Don Omar & Lucenzo',b:136,dur:210},
-      {t:'El Farsante',a:'Ozuna',b:88,dur:210},{t:'Hawái',a:'Maluma',b:93,dur:208},
-      {t:'Todo de Ti',a:'Rauw Alejandro',b:95,dur:210},{t:'Qué Calor',a:'Major Lazer & J Balvin',b:100,dur:210},
-      {t:'Con Calma',a:'Daddy Yankee & Snow',b:97,dur:210},{t:'La Gasolina',a:'Daddy Yankee',b:100,dur:213},
-      {t:'Taki Taki',a:'DJ Snake',b:98,dur:210},{t:'MIA',a:'Bad Bunny & Drake',b:86,dur:210},
-      {t:'I Like It',a:'Cardi B & Bad Bunny',b:121,dur:210},{t:'Dakiti',a:'Bad Bunny & Jhay Cortez',b:91,dur:200},
-      {t:'Callaíta',a:'Bad Bunny',b:77,dur:234},{t:'Tusa',a:'Karol G & Nicki Minaj',b:98,dur:200},
-    ],
-    'Hip-Hop':[
-      {t:'HUMBLE.',a:'Kendrick Lamar',b:150,dur:177},{t:"God's Plan",a:'Drake',b:77},
-      {t:'Congratulations',a:'Post Malone',b:110,dur:220},{t:'Sicko Mode',a:'Travis Scott',b:155,dur:312},
-      {t:'Rockstar',a:'Post Malone & 21 Savage',b:160,dur:218},{t:'Rich Flex',a:'Drake & 21 Savage',b:94,dur:212},
-      {t:'Essence',a:'Wizkid & Tems',b:96,dur:244},{t:'HIGHEST IN THE ROOM',a:'Travis Scott',b:138,dur:210},
-      {t:'DNA.',a:'Kendrick Lamar',b:83,dur:185},{t:'Alright',a:'Kendrick Lamar',b:94,dur:219},
-      {t:'Started From the Bottom',a:'Drake',b:88,dur:210},{t:'Powerglide',a:'Rae Sremmurd',b:79,dur:210},
-      {t:'Versace',a:'Migos',b:137,dur:210},{t:'Bad and Boujee',a:'Migos',b:130,dur:210},
-      {t:'Congratulations',a:'Mac Miller',b:93,dur:210},{t:'Good Times',a:'Chance the Rapper',b:96,dur:210},
-      {t:'No Problem',a:'Chance the Rapper',b:100,dur:210},{t:'Same Drugs',a:'Chance the Rapper',b:75,dur:210},
-      {t:'Sunday Candy',a:'Chance the Rapper',b:92,dur:210},{t:'Blessings',a:'Chance the Rapper',b:80,dur:210},
-    ],
-    'K-Pop':[
-      {t:'Dynamite',a:'BTS',b:114,dur:199},{t:'Fancy',a:'TWICE',b:112,dur:210},
-      {t:'How You Like That',a:'BLACKPINK',b:135,dur:182},{t:'ELEVEN',a:'IVE',b:119,dur:171},
-      {t:'Pink Venom',a:'BLACKPINK',b:137,dur:196},{t:'Butter',a:'BTS',b:110,dur:164},
-      {t:'Tomboy',a:'(G)I-DLE',b:126,dur:193},{t:'Next Level',a:'aespa',b:116,dur:210},
-      {t:'Hype Boy',a:'NewJeans',b:130,dur:185},{t:'Celebrity',a:'IU',b:118,dur:191},
-      {t:'Ditto',a:'NewJeans',b:90,dur:189},{t:'Feel Special',a:'TWICE',b:110,dur:210},
-      {t:'ASAP',a:'TWICE',b:115,dur:210},{t:'More & More',a:'TWICE',b:117,dur:210},
-      {t:'Alcohol-Free',a:'TWICE',b:104,dur:210},{t:'Psycho',a:'Red Velvet',b:130,dur:210},
-      {t:'Power Up',a:'Red Velvet',b:130,dur:210},{t:'Bad Boy',a:'Red Velvet',b:104,dur:210},
-      {t:'Monster',a:'EXO',b:138,dur:210},{t:'Call Me Baby',a:'EXO',b:126,dur:210},
-    ],
-    'R&B / Soul':[
-      {t:'Leave the Door Open',a:'Silk Sonic',b:90,dur:243},{t:'Good Days',a:'SZA',b:117,dur:375},
-      {t:'Peaches',a:'Justin Bieber',b:90,dur:210},{t:'Best Part',a:'Daniel Caesar & H.E.R.',b:78,dur:218},
-      {t:'Die For You',a:'The Weeknd',b:104,dur:260},{t:'Overjoyed',a:'Stevie Wonder',b:112,dur:210},
-      {t:'Crazy in Love',a:'Beyoncé',b:100,dur:236},{t:'No Scrubs',a:'TLC',b:100,dur:210},
-      {t:'Superstar',a:'Usher',b:85,dur:248},{t:'Yeah!',a:'Usher',b:104,dur:210},
-      {t:'Burn',a:'Usher',b:96,dur:210},{t:'My Boo',a:'Usher & Alicia Keys',b:92,dur:210},
-      {t:'If I Ain\'t Got You',a:'Alicia Keys',b:82,dur:210},{t:'Fallin\'',a:'Alicia Keys',b:90,dur:210},
-      {t:'No One',a:'Alicia Keys',b:96,dur:210},{t:'Girl on Fire',a:'Alicia Keys',b:120,dur:210},
-      {t:'Empire State of Mind',a:'Jay-Z & Alicia Keys',b:84,dur:210},{t:'New York State of Mind',a:'Jay-Z',b:80,dur:210},
-      {t:'99 Problems',a:'Jay-Z',b:140,dur:210},{t:'Run This Town',a:'Jay-Z & Rihanna',b:95,dur:210},
-    ],
-    'Indie':[
-      {t:'Electric Feel',a:'MGMT',b:109,dur:230},{t:'Golden Hour',a:'JVKE',b:97,dur:209},
-      {t:"Dog Days Are Over",a:"Florence + The Machine",b:168},{t:'Little Talks',a:'Of Monsters and Men',b:96,dur:210},
-      {t:'Ho Hey',a:'The Lumineers',b:136,dur:163},{t:'Budapest',a:'George Ezra',b:128,dur:210},
-      {t:'Take a Walk',a:'Passion Pit',b:131,dur:210},{t:'Stubborn Love',a:'The Lumineers',b:126,dur:239},
-      {t:'Mykonos',a:'Fleet Foxes',b:92,dur:210},{t:'Youth',a:'Daughter',b:92,dur:210},
-      {t:'Bloom',a:'The Paper Kites',b:84,dur:210},{t:'Fire Escape',a:'Andrew McMahon',b:120,dur:210},
-      {t:'Home',a:'Edward Sharpe & The Magnetic Zeros',b:94,dur:210},{t:'40 Day Dream',a:'Edward Sharpe',b:98,dur:210},
-      {t:'Shake Me Down',a:'Cage the Elephant',b:112,dur:210},{t:'Ain\'t No Rest for the Wicked',a:'Cage the Elephant',b:122,dur:210},
-      {t:'Shake Me Down',a:'Cage the Elephant',b:112,dur:210},{t:'Come a Little Closer',a:'Cage the Elephant',b:87,dur:210},
-      {t:'Cigarette Daydreams',a:'Cage the Elephant',b:84,dur:210},{t:'Mess Is Mine',a:'Vance Joy',b:134,dur:210},
-    ],
-    'Rock':[
-      {t:"Don't Stop Me Now",a:'Queen',b:156},{t:'Bohemian Rhapsody',a:'Queen',b:72,dur:354},
-      {t:'Mr. Brightside',a:'The Killers',b:148,dur:222},{t:'Seven Nation Army',a:'The White Stripes',b:124,dur:210},
-      {t:"It's My Life",a:'Bon Jovi',b:120},{t:'Highway to Hell',a:'AC/DC',b:116,dur:210},
-      {t:'We Will Rock You',a:'Queen',b:81,dur:210},{t:'Jump',a:'Van Halen',b:132,dur:210},
-      {t:'Livin on a Prayer',a:'Bon Jovi',b:123,dur:210},{t:'Eye of the Tiger',a:'Survivor',b:109,dur:245},
-      {t:'Walking on Sunshine',a:'Katrina & The Waves',b:152,dur:210},{t:'Here I Go Again',a:'Whitesnake',b:120,dur:210},
-      {t:'Pour Some Sugar on Me',a:'Def Leppard',b:124,dur:210},{t:'Summer of \'69',a:'Bryan Adams',b:144,dur:210},
-      {t:'Centerfold',a:'J. Geils Band',b:166,dur:210},{t:'Brown Eyed Girl',a:'Van Morrison',b:150,dur:210},
-      {t:'Sweet Home Alabama',a:'Lynyrd Skynyrd',b:100,dur:210},{t:'Old Time Rock and Roll',a:'Bob Seger',b:132,dur:210},
-      {t:'Come on Eileen',a:'Dexys Midnight Runners',b:175,dur:210},{t:'Take On Me',a:'a-ha',b:169,dur:210},
-    ],
-    'Metal':[
-      {t:'Don\'t Stop Believin\'',a:'Journey',b:119,dur:210},{t:'Living for the Night',a:'Night Ranger',b:130,dur:210},
-      {t:'Kickstart My Heart',a:'Mötley Crüe',b:141,dur:210},{t:'Girls Girls Girls',a:'Mötley Crüe',b:130,dur:210},
-      {t:'Panama',a:'Van Halen',b:142,dur:210},{t:'Hot for Teacher',a:'Van Halen',b:182,dur:210},
-      {t:'Welcome to the Jungle',a:'Guns N\' Roses',b:124,dur:210},{t:'Paradise City',a:'Guns N\' Roses',b:100,dur:210},
-      {t:'Round and Round',a:'Ratt',b:130,dur:210},{t:'Talk Dirty to Me',a:'Poison',b:130,dur:210},
-      {t:'I Wanna Rock',a:'Twisted Sister',b:138,dur:210},{t:'We\'re Not Gonna Take It',a:'Twisted Sister',b:144,dur:210},
-      {t:'Youth Gone Wild',a:'Skid Row',b:155,dur:210},{t:'18 and Life',a:'Skid Row',b:110,dur:210},
-      {t:'Photograph',a:'Def Leppard',b:118,dur:210},{t:'Rock of Ages',a:'Def Leppard',b:120,dur:210},
-      {t:'Foolin\'',a:'Def Leppard',b:106,dur:210},{t:'Animal',a:'Def Leppard',b:110,dur:210},
-      {t:'Hysteria',a:'Def Leppard',b:116,dur:210},{t:'Love Bites',a:'Def Leppard',b:80,dur:210},
-    ],
-    'Electronic':[
-      {t:'Titanium',a:'David Guetta & Sia',b:126,dur:245},{t:'Midnight City',a:'M83',b:105,dur:244},
-      {t:'Clarity',a:'Zedd & Foxes',b:128,dur:210},{t:'Lean On',a:'Major Lazer & MØ',b:98,dur:210},
-      {t:'One More Time',a:'Daft Punk',b:123,dur:320},{t:'Around the World',a:'Daft Punk',b:121,dur:428},
-      {t:'Blue (Da Ba Dee)',a:'Eiffel 65',b:136,dur:210},{t:'Levels',a:'Avicii',b:126,dur:324},
-      {t:'Wake Me Up',a:'Avicii',b:124,dur:247},{t:'Animals',a:'Martin Garrix',b:128,dur:278},
-      {t:'Silence',a:'Marshmello & Khalid',b:100,dur:210},{t:'Happier',a:'Marshmello & Bastille',b:100,dur:210},
-      {t:'Friends',a:'Marshmello & Anne-Marie',b:95,dur:210},{t:'KIDS',a:'MGMT',b:112,dur:210},
-      {t:'Time to Pretend',a:'MGMT',b:96,dur:257},{t:'Weekend',a:'Smith & Mighty',b:102,dur:210},
-      {t:'Sweet Nothing',a:'Calvin Harris & Florence',b:128,dur:210},{t:'Feel So Close',a:'Calvin Harris',b:128,dur:210},
-      {t:'Summer',a:'Calvin Harris',b:128,dur:210},{t:'Outside',a:'Calvin Harris & Ellie Goulding',b:128,dur:210},
-    ],
-    'Bollywood':[
-      {t:'Badtameez Dil',a:'Pritam',b:138,dur:239},{t:'Gallan Goodiyaan',a:'Shankar-Ehsaan-Loy',b:128,dur:295},
-      {t:'Balam Pichkari',a:'Vishal-Shekhar',b:126,dur:210},{t:'Nagada Sang Dhol',a:'Shreya Ghoshal',b:140,dur:210},
-      {t:'London Thumakda',a:'Sachin-Jigar',b:145,dur:228},{t:'Ainvayi Ainvayi',a:'Salim-Sulaiman',b:130,dur:210},
-      {t:'Desi Girl',a:'Shankar Ehsaan Loy',b:148,dur:210},{t:'Jai Ho',a:'A. R. Rahman',b:144,dur:210},
-      {t:'Dhoom Machale',a:'Sunidhi Chauhan',b:150,dur:210},{t:'Malhari',a:'Vishal-Shekhar',b:160,dur:264},
-      {t:'Aankh Marey',a:'Tanishk Bagchi',b:130,dur:210},{t:'Simmba Title Track',a:'Tanishk Bagchi',b:128,dur:210},
-      {t:'Dil Chori',a:'Yo Yo Honey Singh',b:118,dur:210},{t:'Ek Ladki Ko Dekha',a:'A. R. Rahman',b:100,dur:210},
-      {t:'Swag Se Swagat',a:'Vishal-Shekhar',b:132,dur:210},{t:'Radha',a:'Vishal-Shekhar',b:124,dur:210},
-      {t:'Cutie Pie',a:'Pritam',b:126,dur:210},{t:'Sau Dard',a:'Pritam',b:128,dur:210},
-      {t:'Matargashti',a:'Mohit Chauhan',b:136,dur:210},{t:'Nashe Si Chadh Gayi',a:'Pritam',b:130,dur:210},
-    ],
-    'Afrobeats':[
-      {t:'Last Last',a:'Burna Boy',b:106,dur:197},{t:'Jerusalema',a:'Master KG',b:106,dur:365},
-      {t:'Essence',a:'Wizkid & Tems',b:96,dur:244},{t:'Love Nwantiti',a:'CKay',b:97,dur:185},
-      {t:'Telephone',a:'Fireboy DML',b:96,dur:210},{t:'Peru',a:'Fireboy DML & Ed Sheeran',b:96,dur:203},
-      {t:'Monalisa',a:'Lojay & Sarz',b:98,dur:210},{t:'Calm Down',a:'Rema',b:106,dur:218},
-      {t:'Bounce',a:'Davido',b:90,dur:210},{t:'FEM',a:'Davido',b:100,dur:210},
-      {t:'Fall',a:'Davido',b:89,dur:231},{t:'Joro',a:'Wizkid',b:97,dur:210},
-      {t:'Mood',a:'Wizkid',b:88,dur:210},{t:'Made in Lagos',a:'Wizkid',b:90,dur:210},
-      {t:'True Love',a:'Wizkid & Burna Boy',b:94,dur:210},{t:'Run My Race',a:'Burna Boy',b:112,dur:210},
-      {t:'Kilometre',a:'Burna Boy',b:112,dur:210},{t:'Way Too Big',a:'Burna Boy',b:98,dur:210},
-      {t:'Bank on It',a:'Burna Boy',b:105,dur:210},{t:'Alarm Clock',a:'Burna Boy',b:110,dur:210},
-    ],
-    'French':[
-      {t:'La Vie en Rose',a:'Édith Piaf',b:118,dur:191},{t:'Non, je ne regrette rien',a:'Édith Piaf',b:80,dur:130},
-      {t:'Alors on danse',a:'Stromae',b:124,dur:211},{t:'Papaoutai',a:'Stromae',b:128,dur:254},
-      {t:'Formidable',a:'Stromae',b:130,dur:215},{t:'Tous les mêmes',a:'Stromae',b:122,dur:210},
-      {t:'La Vie',a:'Kyo',b:138,dur:210},{t:'Une belle histoire',a:'Michel Fugain',b:120,dur:210},
-      {t:'Ne me quitte pas',a:'Jacques Brel',b:68,dur:270},{t:'La Bohème',a:'Charles Aznavour',b:88,dur:228},
-      {t:'L\'Aziza',a:'Daniel Balavoine',b:126,dur:210},{t:'Je suis venu te dire',a:'Serge Gainsbourg',b:100,dur:210},
-      {t:'Ce jeu',a:'Yelle',b:130,dur:210},{t:'A cause des garçons',a:'Yelle',b:128,dur:210},
-      {t:'Renaissance',a:'DJ Snake',b:120,dur:210},{t:'Lean On (French)',a:'Major Lazer',b:98,dur:210},
-      {t:'Orelsan — Basique',a:'Orelsan',b:88,dur:210},{t:'Défaite de famille',a:'Orelsan',b:90,dur:210},
-      {t:'La Fête',a:'Orelsan',b:100,dur:210},{t:'Nekfeu — Foufoue',a:'Nekfeu',b:96,dur:210},
-    ],
-    'J-Pop':[
-      {t:'Lemon',a:'Kenshi Yonezu',b:88,dur:271},{t:'Paprika',a:'Kenshi Yonezu',b:119,dur:229},
-      {t:'Uma to Shika',a:'King Gnu',b:130,dur:210},{t:'Hakujitsu',a:'King Gnu',b:120,dur:210},
-      {t:'Idol',a:'YOASOBI',b:180,dur:214},{t:'Yoru ni Kakeru',a:'YOASOBI',b:130,dur:258},
-      {t:'Shinunoga E-Wa',a:'Fujii Kaze',b:120,dur:210},{t:'Matsuri',a:'Fujii Kaze',b:126,dur:210},
-      {t:'Zenzenzense',a:'RADWIMPS',b:104,dur:250},{t:'Sparkle',a:'RADWIMPS',b:136,dur:294},
-      {t:'Gurenge',a:'LiSA',b:170,dur:229},{t:'Homura',a:'LiSA',b:150,dur:210},
-      {t:'Pretender',a:'Official HIGE DANdism',b:130,dur:264},{t:'I LOVE...',a:'Official HIGE DANdism',b:138,dur:210},
-      {t:'Cry Baby',a:'Official HIGE DANdism',b:180,dur:210},{t:'Mixed Nuts',a:'Official HIGE DANdism',b:136,dur:210},
-      {t:'Oshi no Ko',a:'YOASOBI',b:165,dur:210},{t:'Biri-Biri',a:'YOASOBI',b:150,dur:210},
-      {t:'Ao no Sumika',a:'Tatsuya Kitani',b:130,dur:210},{t:'Kaikai Kitan',a:'Eve',b:190,dur:210},
-    ],
-    'Portuguese':[
-      {t:'Evidências',a:'Chitãozinho & Xororó',b:90,dur:210},{t:'País Tropical',a:'Jorge Ben Jor',b:96,dur:210},
-      {t:'Garota de Ipanema',a:'João Gilberto',b:120,dur:162},{t:'A Banda',a:'Chico Buarque',b:118,dur:210},
-      {t:'Água de Março',a:'Elis Regina',b:90,dur:210},{t:'Asa Branca',a:'Luiz Gonzaga',b:100,dur:210},
-      {t:'Baião',a:'Luiz Gonzaga',b:108,dur:210},{t:'Que País É Este',a:'Legião Urbana',b:138,dur:210},
-      {t:'Eduardo e Mônica',a:'Legião Urbana',b:126,dur:272},{t:'Tempo Perdido',a:'Legião Urbana',b:104,dur:318},
-      {t:'Pais e Filhos',a:'Legião Urbana',b:120,dur:210},{t:'Monte Castelo',a:'Legião Urbana',b:112,dur:210},
-      {t:'Para Lennon e McCartney',a:'Milton Nascimento',b:96,dur:210},{t:'Coração de Estudante',a:'Milton Nascimento',b:88,dur:210},
-      {t:'Amor I Love You',a:'Marisa Monte',b:102,dur:210},{t:'Gentileza',a:'Marisa Monte',b:98,dur:210},
-      {t:'Beija Eu',a:'Marisa Monte',b:96,dur:210},{t:'Ainda Bem',a:'Marisa Monte',b:110,dur:210},
-      {t:'Mais do Mesmo',a:'Jota Quest',b:130,dur:210},{t:'Dias Melhores',a:'Jota Quest',b:128,dur:210},
-    ],
-    'Turkish':[
-      {t:'Simarik',a:'Tarkan',b:128,dur:214},{t:'Acı Aşk',a:'Tarkan',b:100,dur:210},
-      {t:'Beni Çok Sev',a:'Tarkan',b:120,dur:210},{t:'Dudu',a:'Tarkan',b:126,dur:210},
-      {t:'Hepsi Geçer',a:'Sertab Erener',b:130,dur:210},{t:'Aşk',a:'Sertab Erener',b:118,dur:210},
-      {t:'Değeri Var',a:'Hadise',b:122,dur:210},{t:'Düm Tek Tek',a:'Hadise',b:128,dur:210},
-      {t:'İkimizin Yerine',a:'Sıla',b:108,dur:210},{t:'Ben de Yanarım',a:'Sıla',b:112,dur:210},
-      {t:'Yok Artık',a:'Bengü',b:120,dur:210},{t:'Her Şey Seninle Güzel',a:'Bengü',b:116,dur:210},
-      {t:'Gel',a:'Semicenk',b:110,dur:210},{t:'Yalnızlık',a:'Yaşlı Amca',b:88,dur:210},
-      {t:'Unutamam',a:'Sertab Erener',b:105,dur:210},{t:'Aşkın Olayım',a:'Sertab Erener',b:118,dur:210},
-      {t:'Sarhoş',a:'Duman',b:112,dur:238},{t:'Belki',a:'Duman',b:100,dur:245},
-      {t:'Can',a:'Duman',b:108,dur:210},{t:'Seni Sana Bıraktım',a:'Duman',b:96,dur:210},
-    ],
-    'German':[
-      {t:'99 Luftballons',a:'Nena',b:128,dur:237},{t:'Major Tom',a:'Peter Schilling',b:130,dur:210},
-      {t:'Du Hast',a:'Rammstein',b:124,dur:228},{t:'Engel',a:'Rammstein',b:130,dur:252},
-      {t:'Links 2-3-4',a:'Rammstein',b:130,dur:210},{t:'Feuer Frei!',a:'Rammstein',b:140,dur:210},
-      {t:'Amerika',a:'Rammstein',b:126,dur:210},{t:'Mein Teil',a:'Rammstein',b:130,dur:210},
-      {t:'Sonne',a:'Rammstein',b:130,dur:210},{t:'Ohne Dich',a:'Rammstein',b:80,dur:271},
-      {t:'Ich Will',a:'Rammstein',b:130,dur:210},{t:'Rosenrot',a:'Rammstein',b:122,dur:210},
-      {t:'Schrei',a:'Tokio Hotel',b:136,dur:210},{t:'Durch den Monsun',a:'Tokio Hotel',b:130,dur:210},
-      {t:'An deiner Seite (Ich bin da)',a:'Tokio Hotel',b:120,dur:210},{t:'Rette mich',a:'Tokio Hotel',b:138,dur:210},
-      {t:'Spring Nicht',a:'Tokio Hotel',b:130,dur:210},{t:'Ready, Set, Go!',a:'Tokio Hotel',b:140,dur:210},
-      {t:'Lass mich mit dir tauschen',a:'Tokio Hotel',b:132,dur:210},{t:'In die Nacht',a:'Tokio Hotel',b:128,dur:210},
-    ],
-    'Latin':[
-      {t:'Despacito',a:'Luis Fonsi',b:89,dur:210},{t:'La Gasolina',a:'Daddy Yankee',b:100,dur:213},
-      {t:'I Like It',a:'Cardi B & Bad Bunny',b:121,dur:210},{t:'Con Calma',a:'Daddy Yankee & Snow',b:97,dur:210},
-      {t:'Taki Taki',a:'DJ Snake',b:98,dur:210},{t:'MIA',a:'Bad Bunny & Drake',b:86,dur:210},
-      {t:'Un Verano Sin Ti',a:'Bad Bunny',b:90,dur:210},{t:'Tití Me Preguntó',a:'Bad Bunny',b:100,dur:210},
-      {t:'El Apagón',a:'Bad Bunny',b:98,dur:210},{t:'Moscow Mule',a:'Bad Bunny',b:82,dur:210},
-      {t:'Efecto',a:'Bad Bunny',b:85,dur:210},{t:'Ojitos Lindos',a:'Bad Bunny & Bomba Estéreo',b:88,dur:210},
-      {t:'Me Porto Bonito',a:'Bad Bunny & Chencho',b:90,dur:210},{t:'Party',a:'Bad Bunny & Rauw Alejandro',b:92,dur:210},
-      {t:'Hawái',a:'Maluma',b:93,dur:208},{t:'Dakiti',a:'Bad Bunny & Jhay Cortez',b:91,dur:200},
-      {t:'Callaíta',a:'Bad Bunny',b:77,dur:234},{t:'Yonaguni',a:'Bad Bunny',b:80,dur:210},
-      {t:'Noche de Anoche',a:'Bad Bunny & Rosalía',b:90,dur:210},{t:'Lo Siento BB:/',a:'Bad Bunny & Tainy',b:84,dur:210},
-    ],
-    'Jazz':[
-      {t:'Take Five',a:'Dave Brubeck Quartet',b:176,dur:324},{t:'So What',a:'Miles Davis',b:136,dur:561},
-      {t:'Fly Me to the Moon',a:'Frank Sinatra',b:152,dur:210},{t:'Blue in Green',a:'Miles Davis',b:80,dur:337},
-      {t:"Ain't Misbehavin'",a:'Fats Waller',b:152},{t:'Autumn Leaves',a:'Chet Baker',b:120,dur:213},
-      {t:'Round Midnight',a:'Thelonious Monk',b:68,dur:332},{t:'My Favorite Things',a:'John Coltrane',b:204,dur:210},
-      {t:'Summertime',a:'Ella Fitzgerald',b:60,dur:202},{t:'All the Things You Are',a:'Charlie Parker',b:180,dur:210},
-      {t:'A Night in Tunisia',a:'Dizzy Gillespie',b:120,dur:210},{t:'Birdland',a:'Weather Report',b:160,dur:210},
-      {t:'Sing, Sing, Sing',a:'Benny Goodman',b:200,dur:210},{t:'In the Mood',a:'Glenn Miller',b:192,dur:210},
-      {t:'Take the A Train',a:'Duke Ellington',b:220,dur:210},{t:'Cantaloupe Island',a:'Herbie Hancock',b:140,dur:341},
-      {t:'Watermelon Man',a:'Herbie Hancock',b:148,dur:210},{t:'Maiden Voyage',a:'Herbie Hancock',b:120,dur:210},
-      {t:'Chameleon',a:'Herbie Hancock',b:152,dur:210},{t:'Lush Life',a:'John Coltrane',b:56,dur:210},
-    ],
-    'Alternative':[
-      {t:'Mr. Brightside',a:'The Killers',b:148,dur:222},{t:'Do I Wanna Know?',a:'Arctic Monkeys',b:85,dur:272},
-      {t:'R U Mine?',a:'Arctic Monkeys',b:96,dur:202},{t:'Pompeii',a:'Bastille',b:126,dur:212},
-      {t:'Stolen Dance',a:'Milky Chance',b:95,dur:253},{t:'Cleopatra',a:'The Lumineers',b:150,dur:210},
-      {t:'Ribs',a:'Lorde',b:79,dur:232},{t:'Yellow',a:'Coldplay',b:87,dur:269},
-      {t:'Tongue Tied',a:'Grouplove',b:176,dur:210},{t:'The Less I Know the Better',a:'Tame Impala',b:116,dur:216},
-      {t:'Let It Happen',a:'Tame Impala',b:116,dur:467},{t:'Electric Feel',a:'MGMT',b:109,dur:230},
-      {t:'Little Lion Man',a:'Mumford & Sons',b:174,dur:210},{t:'I Will Wait',a:'Mumford & Sons',b:160,dur:210},
-      {t:'Awake My Soul',a:'Mumford & Sons',b:154,dur:210},{t:'The Cave',a:'Mumford & Sons',b:162,dur:210},
-      {t:'After the Storm',a:'Mumford & Sons',b:112,dur:210},{t:'Sigh No More',a:'Mumford & Sons',b:110,dur:210},
-      {t:'Babel',a:'Mumford & Sons',b:162,dur:210},{t:'Ghosts That We Knew',a:'Mumford & Sons',b:92,dur:210},
-    ],
-    'Classical':[
-      {t:'Symphony No. 9',a:'Beethoven',b:72,dur:210},{t:'Eine Kleine Nachtmusik',a:'Mozart',b:148,dur:384},
-      {t:'Spring (The Four Seasons)',a:'Vivaldi',b:134,dur:198},{t:'Ode to Joy',a:'Beethoven',b:78,dur:248},
-      {t:'Hungarian Dance No. 5',a:'Brahms',b:220,dur:210},{t:'1812 Overture',a:'Tchaikovsky',b:132,dur:210},
-      {t:'Ride of the Valkyries',a:'Wagner',b:130,dur:210},{t:'Flight of the Bumblebee',a:'Rimsky-Korsakov',b:200,dur:210},
-      {t:'Rondo Alla Turca',a:'Mozart',b:140,dur:210},{t:'Marche Militaire',a:'Schubert',b:120,dur:210},
-      {t:'William Tell Overture',a:'Rossini',b:240,dur:210},{t:'Sabre Dance',a:'Khachaturian',b:160,dur:210},
-      {t:'In the Hall of the Mountain King',a:'Grieg',b:200,dur:210},{t:'Toccata and Fugue in D minor',a:'Bach',b:120,dur:210},
-      {t:'Peer Gynt Suite',a:'Grieg',b:144,dur:210},{t:'Piano Concerto No.1',a:'Tchaikovsky',b:76,dur:210},
-      {t:'Waltz of the Flowers',a:'Tchaikovsky',b:180,dur:210},{t:'Swan Lake',a:'Tchaikovsky',b:76,dur:210},
-      {t:'The Nutcracker Suite',a:'Tchaikovsky',b:112,dur:210},{t:'Pictures at an Exhibition',a:'Mussorgsky',b:108,dur:210},
-    ],
-  },
-  sad:{
-    'English Pop':[
-      {t:'Someone Like You',a:'Adele',b:67,dur:210},{t:'Drivers License',a:'Olivia Rodrigo',b:76,dur:242},
-      {t:"When the Party's Over",a:'Billie Eilish',b:74},{t:'Exile',a:'Taylor Swift ft. Bon Iver',b:79,dur:210},
-      {t:'Enough for You',a:'Olivia Rodrigo',b:76,dur:210},{t:'Make You Feel My Love',a:'Adele',b:76,dur:210},
-      {t:'All I Wanted',a:'Paramore',b:99,dur:210},{t:'The Joke',a:'Brandi Carlile',b:76,dur:210},
-      {t:'Slow Burn',a:'Kacey Musgraves',b:60,dur:210},{t:'Someone You Loved',a:'Lewis Capaldi',b:110,dur:182},
-      {t:'Before He Cheats',a:'Carrie Underwood',b:160,dur:210},{t:'My Immortal',a:'Evanescence',b:74,dur:210},
-      {t:'Good Riddance',a:'Green Day',b:76,dur:210},{t:'Yesterday',a:'The Beatles',b:96,dur:210},
-      {t:'Blackbird',a:'The Beatles',b:92,dur:210},{t:'The Long and Winding Road',a:'The Beatles',b:74,dur:210},
-      {t:'Let It Be',a:'The Beatles',b:71,dur:210},{t:'Hey Jude',a:'The Beatles',b:74,dur:210},
-      {t:'Eleanor Rigby',a:'The Beatles',b:126,dur:210},{t:'In My Life',a:'The Beatles',b:101,dur:210},
-    ],
-    'Spanish':[
-      {t:'Tusa',a:'Karol G & Nicki Minaj',b:98,dur:200},{t:'La Llorona',a:'Chavela Vargas',b:72,dur:210},
-      {t:'Bésame Mucho',a:'Consuelo Velázquez',b:68,dur:210},{t:'No Te Vayas',a:'Ha*Ash',b:80,dur:210},
-      {t:'Si No Te Hubieras Ido',a:'Marco Antonio Solís',b:70,dur:210},{t:'Te Extraño',a:'Xtreme',b:75,dur:210},
-      {t:'Volver',a:'Carlos Gardel',b:72,dur:210},{t:'Solamente Tú',a:'Pablo Alborán',b:68,dur:210},
-      {t:'Que Me Quedes Tú',a:'Shakira',b:76,dur:210},{t:'Entre Paréntesis',a:'Silvana Estrada',b:64,dur:210},
-      {t:'Quiero Olvidarte',a:'Río Roma',b:75,dur:210},{t:'Sin Ti',a:'Marco Antonio Solís',b:70,dur:210},
-      {t:'El Día que Me Quieras',a:'Carlos Gardel',b:76,dur:210},{t:'Caminito',a:'Carlos Gardel',b:68,dur:210},
-      {t:'La Puerta',a:'Vicentico',b:72,dur:210},{t:'Gracias a la Vida',a:'Mercedes Sosa',b:68,dur:210},
-      {t:'Alfonsina y el Mar',a:'Mercedes Sosa',b:60,dur:210},{t:'Todo Cambia',a:'Mercedes Sosa',b:72,dur:210},
-      {t:'Sólo le Pido a Dios',a:'Mercedes Sosa',b:64,dur:210},{t:'Un Hombre Así',a:'Natalia Lafourcade',b:70,dur:210},
-    ],
-    'Hip-Hop':[
-      {t:'The Search',a:'NF',b:90,dur:210},{t:'Let You Down',a:'NF',b:90,dur:210},
-      {t:'Lucid Dreams',a:'Juice WRLD',b:83,dur:239},{t:'Falling Down',a:'Lil Peep & XXXTentacion',b:90,dur:210},
-      {t:'Changes',a:'XXXTentacion',b:86,dur:131},{t:'SAD!',a:'XXXTentacion',b:76,dur:166},
-      {t:'Jocelyn Flores',a:'XXXTentacion',b:80,dur:210},{t:'Leave Out All the Rest',a:'Linkin Park',b:90,dur:210},
-      {t:'Numb/Encore',a:'Linkin Park & Jay-Z',b:112,dur:210},{t:'My People',a:'NF',b:85,dur:210},
-      {t:'Mansion',a:'NF',b:86,dur:210},{t:'How Could You Leave Us',a:'NF',b:84,dur:210},
-      {t:'Remember This',a:'NF',b:80,dur:210},{t:'Paralyzed',a:'NF',b:88,dur:210},
-      {t:'Got You on My Mind',a:'NF',b:82,dur:210},{t:'Notepad',a:'NF',b:86,dur:210},
-      {t:'Intro III',a:'NF',b:80,dur:210},{t:'Lie',a:'NF',b:84,dur:210},
-      {t:'Alone',a:'NF',b:90,dur:210},{t:'All I Have',a:'NF',b:88,dur:210},
-    ],
-    'K-Pop':[
-      {t:'Eight',a:'IU & Suga',b:88,dur:202},{t:'Through the Night',a:'IU',b:67,dur:244},
-      {t:'Spring Day',a:'BTS',b:104,dur:284},{t:'Love Poem',a:'IU',b:74,dur:210},
-      {t:'Blue & Grey',a:'BTS',b:75,dur:254},{t:'Butterfly',a:'BTS',b:74,dur:210},
-      {t:'Gone',a:'ROSÉ',b:97,dur:210},{t:'Hard to Love',a:'ROSÉ',b:120,dur:210},
-      {t:'Dear Me',a:'IU',b:72,dur:210},{t:'Someday',a:'IU',b:80,dur:210},
-      {t:'Hold My Hand',a:'IU',b:68,dur:210},{t:'Autumn Morning',a:'IU',b:78,dur:210},
-      {t:'Epilogue: Young Forever',a:'BTS',b:100,dur:210},{t:'00:00 (Zero O\'Clock)',a:'BTS',b:80,dur:210},
-      {t:'Winter Bear',a:'V (BTS)',b:68,dur:210},{t:'4 O\'Clock',a:'RM & V (BTS)',b:74,dur:210},
-      {t:'Dimple',a:'BTS',b:120,dur:210},{t:'Serendipity',a:'Jimin (BTS)',b:100,dur:210},
-      {t:'Singularity',a:'V (BTS)',b:70,dur:210},{t:'Intro: Serendipity',a:'BTS',b:84,dur:210},
-    ],
-    'R&B / Soul':[
-      {t:'All of Me',a:'John Legend',b:63,dur:269},{t:'Issues',a:'Julia Michaels',b:66,dur:162},
-      {t:'Back to Black',a:'Amy Winehouse',b:113,dur:243},{t:'Rehab',a:'Amy Winehouse',b:115,dur:213},
-      {t:'Take Care',a:'Drake & Rihanna',b:75,dur:210},{t:'Sober',a:'Mahalia',b:77,dur:210},
-      {t:'Cranes in the Sky',a:'Solange',b:82,dur:253},{t:'How Do I Say',a:'H.E.R.',b:80,dur:210},
-      {t:'Hard Place',a:'H.E.R.',b:78,dur:210},{t:'Focus',a:'H.E.R.',b:72,dur:210},
-      {t:'I Used to Know Her',a:'H.E.R.',b:76,dur:210},{t:'2',a:'Beyoncé',b:62,dur:210},
-      {t:'Sandcastles',a:'Beyoncé',b:60,dur:210},{t:'Pray You Catch Me',a:'Beyoncé',b:65,dur:210},
-      {t:'All Night',a:'Beyoncé',b:88,dur:210},{t:'Forward',a:'Beyoncé',b:58,dur:210},
-      {t:'Tears Dry on Their Own',a:'Amy Winehouse',b:128,dur:210},{t:'Wake Up Alone',a:'Amy Winehouse',b:100,dur:210},
-      {t:'Valerie',a:'Amy Winehouse',b:130,dur:210},{t:'You Know I\'m No Good',a:'Amy Winehouse',b:110,dur:210},
-    ],
-    'Indie':[
-      {t:'Motion Sickness',a:'Phoebe Bridgers',b:107,dur:234},{t:'Funeral',a:'Phoebe Bridgers',b:68,dur:221},
-      {t:'Skinny Love',a:'Bon Iver',b:92,dur:213},{t:'Holocene',a:'Bon Iver',b:80,dur:346},
-      {t:'The Night We Met',a:'Lord Huron',b:120,dur:194},{t:'Death With Dignity',a:'Sufjan Stevens',b:96,dur:210},
-      {t:'Casimir Pulaski Day',a:'Sufjan Stevens',b:63,dur:210},{t:'To Build a Home',a:'The Cinematic Orchestra',b:60,dur:390},
-      {t:'Bloom',a:'The Paper Kites',b:84,dur:210},{t:'Eva',a:'Novo Amor',b:78,dur:210},
-      {t:'Fade Into You',a:'Mazzy Star',b:75,dur:210},{t:'Atlas Hands',a:'Benjamin Francis Leftwich',b:74,dur:210},
-      {t:'Ceilings',a:'Lizzy McAlpine',b:80,dur:202},{t:'Two of Us',a:'Lizzy McAlpine',b:78,dur:210},
-      {t:'Little Lies',a:'Lizzy McAlpine',b:76,dur:210},{t:'Staying',a:'Lizzy McAlpine',b:82,dur:210},
-      {t:'when the day is done',a:'beabadoobee',b:90,dur:210},{t:'Care',a:'beabadoobee',b:88,dur:210},
-      {t:'Coffee',a:'beabadoobee',b:82,dur:126},{t:'Death Bed',a:'Powfu & beabadoobee',b:85,dur:173},
-    ],
-    'Classical':[
-      {t:'Adagio for Strings',a:'Samuel Barber',b:56,dur:584},{t:'Clair de Lune',a:'Debussy',b:54,dur:317},
-      {t:'Moonlight Sonata',a:'Beethoven',b:60,dur:960},{t:'Lacrimosa',a:'Mozart',b:54,dur:210},
-      {t:'Air on the G String',a:'Bach',b:64,dur:210},{t:'Spiegel im Spiegel',a:'Arvo Pärt',b:52,dur:210},
-      {t:'Gymnopédie No.1',a:'Erik Satie',b:60,dur:215},{t:'Pavane',a:'Gabriel Fauré',b:60,dur:210},
-      {t:'Ave Maria',a:'Schubert',b:52,dur:210},{t:'Nimrod',a:'Elgar',b:54,dur:210},
-      {t:'Nuvole Bianche',a:'Ludovico Einaudi',b:60,dur:366},{t:'Experience',a:'Ludovico Einaudi',b:68,dur:352},
-      {t:'Divenire',a:'Ludovico Einaudi',b:112,dur:210},{t:'Oltremare',a:'Ludovico Einaudi',b:64,dur:210},
-      {t:'Primavera',a:'Ludovico Einaudi',b:58,dur:210},{t:'Le Onde',a:'Ludovico Einaudi',b:56,dur:210},
-      {t:'On the Nature of Daylight',a:'Max Richter',b:72,dur:397},{t:'Spring (Recomposed)',a:'Max Richter',b:58,dur:210},
-      {t:'Metamorphosis Two',a:'Philip Glass',b:76,dur:210},{t:'Arvo Pärt — Fur Alina',a:'Arvo Pärt',b:48,dur:210},
-    ],
-    'Rock':[
-      {t:'Fix You',a:'Coldplay',b:69,dur:295},{t:'The Sound of Silence',a:'Simon & Garfunkel',b:94,dur:210},
-      {t:'Hurt',a:'Johnny Cash',b:56,dur:217},{t:'Black',a:'Pearl Jam',b:70,dur:210},
-      {t:'Fake Plastic Trees',a:'Radiohead',b:66,dur:210},{t:'Amsterdam',a:'Coldplay',b:78,dur:210},
-      {t:'Wish You Were Here',a:'Pink Floyd',b:63,dur:334},{t:'Tears in Heaven',a:'Eric Clapton',b:75,dur:272},
-      {t:'The Scientist',a:'Coldplay',b:75,dur:309},{t:'Gravity',a:'John Mayer',b:72,dur:249},
-      {t:'Slow Dancing in a Burning Room',a:'John Mayer',b:91,dur:247},{t:'Daughters',a:'John Mayer',b:78,dur:210},
-      {t:'Stop This Train',a:'John Mayer',b:88,dur:210},{t:'3x5',a:'John Mayer',b:74,dur:210},
-      {t:'Comfortable',a:'John Mayer',b:84,dur:210},{t:'Back to You',a:'John Mayer',b:80,dur:210},
-      {t:'Free Fallin\'',a:'Tom Petty',b:84,dur:210},{t:'I Won\'t Back Down',a:'Tom Petty',b:120,dur:210},
-      {t:'Wildflowers',a:'Tom Petty',b:100,dur:210},{t:'Breakdown',a:'Tom Petty',b:112,dur:210},
-    ],
-    'Metal':[
-      {t:'Nothing Else Matters',a:'Metallica',b:74,dur:388},{t:'The Unforgiven',a:'Metallica',b:94,dur:388},
-      {t:'Fade to Black',a:'Metallica',b:112,dur:417},{t:'One',a:'Metallica',b:120,dur:446},
-      {t:'Orion',a:'Metallica',b:90,dur:210},{t:'The Call of Ktulu',a:'Metallica',b:80,dur:210},
-      {t:'Disappear',a:'Ozzy Osbourne',b:72,dur:210},{t:'Road to Nowhere',a:'Ozzy Osbourne',b:80,dur:210},
-      {t:'Dreamer',a:'Ozzy Osbourne',b:78,dur:210},{t:'Changes',a:'Ozzy Osbourne',b:66,dur:210},
-      {t:'Mama, I\'m Coming Home',a:'Ozzy Osbourne',b:80,dur:210},{t:'So Tired',a:'Ozzy Osbourne',b:68,dur:210},
-      {t:'Broken Wings',a:'Mr. Mister',b:80,dur:210},{t:'Take These Broken Wings',a:'Mr. Mister',b:86,dur:210},
-      {t:'Every Rose Has Its Thorn',a:'Poison',b:76,dur:210},{t:'Talk to Angels',a:'Poison',b:70,dur:210},
-      {t:'Patience',a:'Guns N\' Roses',b:80,dur:210},{t:'November Rain',a:'Guns N\' Roses',b:74,dur:210},
-      {t:'Don\'t Cry',a:'Guns N\' Roses',b:76,dur:210},{t:'Estranged',a:'Guns N\' Roses',b:80,dur:210},
-    ],
-    'Electronic':[
-      {t:'Teardrop',a:'Massive Attack',b:80,dur:330},{t:'Unfinished Sympathy',a:'Massive Attack',b:88,dur:210},
-      {t:'Breathe',a:'Télépopmusik',b:100,dur:210},{t:'Porcelain',a:'Moby',b:98,dur:237},
-      {t:'Mad World',a:'Gary Jules',b:89,dur:210},{t:'Only Time',a:'Enya',b:60,dur:210},
-      {t:'Youth',a:'Daughter',b:92,dur:210},{t:'Oblivion',a:'Grimes',b:130,dur:210},
-      {t:'Motion',a:'Bonobo',b:94,dur:366},{t:'Kerala',a:'Bonobo',b:90,dur:310},
-      {t:'Kong',a:'Bonobo',b:84,dur:210},{t:'Cirrus',a:'Bonobo',b:88,dur:210},
-      {t:'First Fires',a:'Bonobo',b:88,dur:210},{t:'Outlier',a:'Bonobo',b:89,dur:210},
-      {t:'Sapphire',a:'Bonobo',b:86,dur:210},{t:'Walk With Me',a:'Bonobo',b:90,dur:210},
-      {t:'Kiara',a:'Bonobo',b:85,dur:210},{t:'The Keeper',a:'Bonobo',b:88,dur:210},
-      {t:'Stay',a:'Bonobo',b:86,dur:210},{t:'Silver',a:'Bonobo',b:88,dur:210},
-    ],
-    'Bollywood':[
-      {t:'Tum Hi Ho',a:'Arijit Singh',b:65,dur:262},{t:'Teri Meri',a:'Shreya Ghoshal',b:68,dur:210},
-      {t:'Aaj Phir Tumpe',a:'Arijit Singh',b:72,dur:210},{t:'Channa Mereya',a:'Arijit Singh',b:76,dur:294},
-      {t:'Ae Dil Hai Mushkil',a:'Arijit Singh',b:70,dur:283},{t:'Phir Le Aya Dil',a:'Arijit Singh',b:68,dur:210},
-      {t:'Ik Vaari Aa',a:'Arijit Singh',b:66,dur:248},{t:'Fitoor',a:'Arijit Singh',b:74,dur:210},
-      {t:'Raabta',a:'Arijit Singh',b:78,dur:245},{t:'Kabhi Jo Baadal Barse',a:'Arijit Singh',b:70,dur:210},
-      {t:'Muskurane',a:'Arijit Singh',b:64,dur:210},{t:'Chahun Main Ya Naa',a:'Arijit Singh',b:72,dur:210},
-      {t:'Hua Hain Aaj',a:'Arijit Singh',b:68,dur:210},{t:'Teri Yaad',a:'Atif Aslam',b:70,dur:210},
-      {t:'Woh Lamhe',a:'Atif Aslam',b:72,dur:210},{t:'Aadat',a:'Atif Aslam',b:68,dur:210},
-      {t:'Pehli Nazar Mein',a:'Atif Aslam',b:74,dur:210},{t:'Tu Jane Na',a:'Atif Aslam',b:70,dur:210},
-      {t:'Doorie',a:'Atif Aslam',b:72,dur:210},{t:'Tere Sang Yaara',a:'Atif Aslam',b:68,dur:210},
-    ],
-    'Afrobeats':[
-      {t:'Falling',a:'Burna Boy',b:80,dur:210},{t:'Anybody',a:'Burna Boy',b:88,dur:210},
-      {t:'Secret',a:'Burna Boy',b:84,dur:210},{t:'Monsters You Made',a:'Burna Boy',b:86,dur:210},
-      {t:'Wonderful',a:'Burna Boy',b:90,dur:210},{t:'Real Life',a:'Burna Boy',b:85,dur:210},
-      {t:'Naughty by Nature',a:'Burna Boy',b:82,dur:210},{t:'Gum Body',a:'Burna Boy',b:88,dur:210},
-      {t:'Want It All',a:'Burna Boy',b:90,dur:210},{t:'Destiny',a:'Burna Boy',b:84,dur:210},
-      {t:'Ye',a:'Burna Boy',b:86,dur:206},{t:'Gbona',a:'Burna Boy',b:92,dur:210},
-      {t:'Heaven\'s Gate',a:'Burna Boy',b:80,dur:210},{t:'Mama',a:'Burna Boy',b:82,dur:210},
-      {t:'Dangote',a:'Burna Boy',b:88,dur:210},{t:'Rollercoaster',a:'Burna Boy',b:86,dur:210},
-      {t:'Alone',a:'Burna Boy',b:84,dur:210},{t:'Mercy',a:'Burna Boy',b:90,dur:210},
-      {t:'Collateral Damage',a:'Burna Boy',b:82,dur:210},{t:'Location',a:'Dave ft. Burna Boy',b:90,dur:210},
-    ],
-    'French':[
-      {t:'Ne me quitte pas',a:'Jacques Brel',b:68,dur:270},{t:'La Bohème',a:'Charles Aznavour',b:88,dur:228},
-      {t:'Non, je ne regrette rien',a:'Édith Piaf',b:80,dur:130},{t:'La Vie en Rose',a:'Édith Piaf',b:118,dur:191},
-      {t:'Hier encore',a:'Charles Aznavour',b:72,dur:210},{t:'Il venait d\'avoir dix-huit ans',a:'Dalida',b:90,dur:210},
-      {t:'Je suis malade',a:'Dalida',b:72,dur:210},{t:'Mourir sur scène',a:'Dalida',b:76,dur:210},
-      {t:'Le temps des fleurs',a:'Dalida',b:84,dur:210},{t:'Bambino',a:'Dalida',b:100,dur:210},
-      {t:'À présent',a:'Eva',b:70,dur:210},{t:'Histoire de coeur',a:'Mireille Mathieu',b:88,dur:210},
-      {t:'Pardonne-moi ce caprice d\'enfant',a:'Mireille Mathieu',b:80,dur:210},{t:'Santa Maria de la Mer',a:'Mireille Mathieu',b:86,dur:210},
-      {t:'Mon Dieu',a:'Édith Piaf',b:72,dur:210},{t:'L\'hymne à l\'amour',a:'Édith Piaf',b:76,dur:210},
-      {t:'Milord',a:'Édith Piaf',b:90,dur:210},{t:'L\'accordéoniste',a:'Édith Piaf',b:88,dur:210},
-      {t:'Sous le ciel de Paris',a:'Édith Piaf',b:100,dur:210},{t:'La foule',a:'Édith Piaf',b:94,dur:210},
-    ],
-    'J-Pop':[
-      {t:'Lemon',a:'Kenshi Yonezu',b:88,dur:271},{t:'Goodbye & Good Luck',a:'YOASOBI',b:100,dur:210},
-      {t:'Ano Yume wo Nazotte',a:'YOASOBI',b:110,dur:210},{t:'Tabun',a:'YOASOBI',b:95,dur:210},
-      {t:'Tsubame',a:'YOASOBI',b:100,dur:210},{t:'Encore',a:'YOASOBI',b:96,dur:210},
-      {t:'Racing into the Night',a:'YOASOBI',b:108,dur:210},{t:'Yuusha',a:'YOASOBI',b:100,dur:210},
-      {t:'Kaibutsu',a:'YOASOBI',b:140,dur:210},{t:'Monster',a:'YOASOBI',b:130,dur:210},
-      {t:'Seventeen',a:'YOASOBI',b:95,dur:210},{t:'Haruka',a:'YOASOBI',b:98,dur:210},
-      {t:'Moshimo Inochi ga Egakereru nara',a:'YOASOBI',b:90,dur:210},{t:'Valentine',a:'YOASOBI',b:96,dur:210},
-      {t:'Gunjou',a:'YOASOBI',b:110,dur:210},{t:'Halzion',a:'YOASOBI',b:94,dur:210},
-      {t:'Yuusha',a:'YOASOBI',b:100,dur:210},{t:'Suki ni Natta Sono Shunkan wo',a:'YOASOBI',b:88,dur:210},
-      {t:'Kessoku Band — Nani ga Warui',a:'Kessoku Band',b:90,dur:210},{t:'Bokura no',a:'Kessoku Band',b:88,dur:210},
-    ],
-    'Portuguese':[
-      {t:'Pecado',a:'Caetano Veloso',b:72,dur:210},{t:'O Leãozinho',a:'Caetano Veloso',b:88,dur:210},
-      {t:'Sozinho',a:'Caetano Veloso',b:80,dur:224},{t:'Terra',a:'Caetano Veloso',b:76,dur:210},
-      {t:'Você Não Me Ensinou a Te Esquecer',a:'Caetano Veloso',b:72,dur:210},{t:'Coração Vagabundo',a:'Caetano Veloso',b:80,dur:210},
-      {t:'Maria Bethânia — Cartomante',a:'Maria Bethânia',b:70,dur:210},{t:'Nave Maria',a:'Maria Bethânia',b:68,dur:210},
-      {t:'Balada do Louco',a:'Mutantes',b:88,dur:210},{t:'A Minha Menina',a:'Os Mutantes',b:96,dur:210},
-      {t:'Tempo Perdido',a:'Legião Urbana',b:104,dur:318},{t:'Pais e Filhos',a:'Legião Urbana',b:120,dur:210},
-      {t:'Monte Castelo',a:'Legião Urbana',b:112,dur:210},{t:'Há Tempos',a:'Legião Urbana',b:100,dur:210},
-      {t:'Pais e Filhos',a:'Legião Urbana',b:120,dur:210},{t:'Saudade',a:'Seu Jorge',b:80,dur:210},
-      {t:'Burguesinha',a:'Seu Jorge',b:96,dur:210},{t:'Carolina',a:'Seu Jorge',b:88,dur:210},
-      {t:'Leãozinho',a:'Seu Jorge',b:92,dur:210},{t:'Tive Razão',a:'Seu Jorge',b:84,dur:210},
-    ],
-    'Turkish':[
-      {t:'Hayat Bazen Tatlı',a:'Teoman',b:90,dur:210},{t:'Roman Havası',a:'Teoman',b:96,dur:210},
-      {t:'Ağlayamam',a:'Teoman',b:88,dur:210},{t:'Aşkın Sona Erdi',a:'Teoman',b:84,dur:210},
-      {t:'Bir Ceza Mahkemesinde Aşk',a:'Teoman',b:80,dur:210},{t:'Kral Çıplak',a:'Teoman',b:92,dur:210},
-      {t:'Günaydın',a:'Sıla',b:96,dur:210},{t:'Olmadı',a:'Sıla',b:90,dur:210},
-      {t:'Sen Benimsin',a:'Sıla',b:88,dur:210},{t:'Bana Ne Sordun',a:'Sıla',b:84,dur:210},
-      {t:'Çok Şey İstedim',a:'Sıla',b:86,dur:210},{t:'Yoksun',a:'Sıla',b:80,dur:210},
-      {t:'Anlamıyorum',a:'Sertab Erener',b:86,dur:210},{t:'Değersiz',a:'Sertab Erener',b:82,dur:210},
-      {t:'Hayatımı Yaktı',a:'Sertab Erener',b:88,dur:210},{t:'Sen Olsan da',a:'Sertab Erener',b:84,dur:210},
-      {t:'Gitme',a:'Bengü',b:82,dur:210},{t:'Seni Unutmak',a:'Bengü',b:80,dur:210},
-      {t:'Kalbim Yoruldu',a:'Bengü',b:78,dur:210},{t:'Seninle Güzel',a:'Bengü',b:84,dur:210},
-    ],
-    'German':[
-      {t:'Ohne Dich',a:'Rammstein',b:80,dur:271},{t:'Engel',a:'Rammstein',b:130,dur:252},
-      {t:'Mutter',a:'Rammstein',b:96,dur:210},{t:'Seemann',a:'Rammstein',b:88,dur:210},
-      {t:'Mein Herz Brennt',a:'Rammstein',b:90,dur:210},{t:'Nebel',a:'Rammstein',b:72,dur:210},
-      {t:'Frühling in Paris',a:'Rammstein',b:84,dur:210},{t:'Wilder Wein',a:'Rammstein',b:88,dur:210},
-      {t:'Klavier',a:'Rammstein',b:80,dur:210},{t:'Amour',a:'Rammstein',b:76,dur:210},
-      {t:'Haifisch',a:'Rammstein',b:88,dur:210},{t:'Rosenrot',a:'Rammstein',b:122,dur:210},
-      {t:'Hilf mir',a:'Rammstein',b:92,dur:210},{t:'Los',a:'Rammstein',b:90,dur:210},
-      {t:'Vergib mir',a:'Rammstein',b:86,dur:210},{t:'Spring',a:'Rammstein',b:100,dur:210},
-      {t:'Mein Land',a:'Rammstein',b:114,dur:210},{t:'Alle Warten auf das Licht',a:'Rammstein',b:94,dur:210},
-      {t:'Tattoo',a:'Rammstein',b:108,dur:210},{t:'Zeit',a:'Rammstein',b:84,dur:303},
-    ],
-    'Latin':[
-      {t:'Bésame Mucho',a:'Trio Los Panchos',b:68,dur:182},{t:'La Llorona',a:'Ángeles Ochoa',b:72,dur:210},
-      {t:'Te Quiero',a:'Mon Laferte',b:80,dur:210},{t:'Quizás Quizás Quizás',a:'Nat King Cole',b:72,dur:210},
-      {t:'Historia de un Amor',a:'Lucho Gatica',b:68,dur:212},{t:'Sabor a Mí',a:'Eydie Gormé',b:64,dur:210},
-      {t:'Sin Ti',a:'Marco Antonio Solís',b:70,dur:210},{t:'La Barca',a:'Roberto Carlos',b:72,dur:210},
-      {t:'El Día que Me Quieras',a:'Carlos Gardel',b:76,dur:210},{t:'Caminito',a:'Carlos Gardel',b:68,dur:210},
-      {t:'Volver',a:'Carlos Gardel',b:72,dur:210},{t:'Por Una Cabeza',a:'Carlos Gardel',b:80,dur:210},
-      {t:'Tango to Evora',a:'Loreena McKennitt',b:76,dur:210},{t:'Malena',a:'Carlos Gardel',b:72,dur:210},
-      {t:'Fumando Espero',a:'Libertad Lamarque',b:68,dur:210},{t:'La Noche que Te Fuiste',a:'Los Panchos',b:70,dur:210},
-      {t:'María Elena',a:'Trío Los Panchos',b:72,dur:210},{t:'Solamente Una Vez',a:'Trío Los Panchos',b:68,dur:210},
-      {t:'Besame',a:'Camila',b:76,dur:210},{t:'Mientes',a:'Camila',b:80,dur:210},
-    ],
-    'Jazz':[
-      {t:'Round Midnight',a:'Thelonious Monk',b:68,dur:332},{t:'Blue in Green',a:'Miles Davis',b:80,dur:337},
-      {t:"Ain't No Sunshine",a:'Bill Withers',b:76},{t:'Cry Me a River',a:'Julie London',b:58,dur:210},
-      {t:'Strange Fruit',a:'Billie Holiday',b:60,dur:163},{t:'God Bless the Child',a:'Billie Holiday',b:68,dur:210},
-      {t:'Lush Life',a:'John Coltrane',b:56,dur:210},{t:'Naima',a:'John Coltrane',b:60,dur:210},
-      {t:'Misty',a:'Erroll Garner',b:92,dur:210},{t:'Everything Happens to Me',a:'Chet Baker',b:66,dur:210},
-      {t:'I Fall in Love Too Easily',a:'Chet Baker',b:60,dur:210},{t:'My Funny Valentine',a:'Chet Baker',b:58,dur:275},
-      {t:'Waltz for Debby',a:'Bill Evans',b:164,dur:386},{t:'Peace Piece',a:'Bill Evans',b:52,dur:210},
-      {t:'Nardis',a:'Bill Evans',b:120,dur:210},{t:'A Flower is a Lovesome Thing',a:'Billy Strayhorn',b:68,dur:210},
-      {t:'Feeling Good',a:'Nina Simone',b:70,dur:169},{t:'Strange Fruit',a:'Nina Simone',b:60,dur:210},
-      {t:'Sinnerman',a:'Nina Simone',b:140,dur:560},{t:'I Put a Spell on You',a:'Nina Simone',b:76,dur:210},
-    ],
-    'Alternative':[
-      {t:'Transatlanticism',a:'Death Cab for Cutie',b:64,dur:210},{t:'No Surprises',a:'Radiohead',b:76,dur:210},
-      {t:'Passenger Seat',a:'Death Cab for Cutie',b:100,dur:210},{t:'All I Want',a:'Kodaline',b:58,dur:210},
-      {t:'Liability',a:'Lorde',b:77,dur:210},{t:'Ribs',a:'Lorde',b:79,dur:232},
-      {t:'Poison & Wine',a:'The Civil Wars',b:78,dur:210},{t:'To Be Alone',a:'Hozier',b:80,dur:210},
-      {t:'In a Week',a:'Hozier',b:72,dur:210},{t:'Cherry Wine',a:'Hozier',b:80,dur:210},
-      {t:'From Eden',a:'Hozier',b:90,dur:210},{t:'Like Real People Do',a:'Hozier',b:82,dur:183},
-      {t:'Work Song',a:'Hozier',b:76,dur:210},{t:'Angel of Small Death',a:'Hozier',b:80,dur:210},
-      {t:'Someone New',a:'Hozier',b:88,dur:210},{t:'Jackie and Wilson',a:'Hozier',b:96,dur:210},
-      {t:'To Be Without You',a:'Gary Moore',b:74,dur:210},{t:'Still Got the Blues',a:'Gary Moore',b:60,dur:210},
-      {t:'Empty Rooms',a:'Gary Moore',b:68,dur:210},{t:'Parisienne Walkways',a:'Gary Moore',b:62,dur:210},
-    ],
-    'Afrobeats':[
-      {t:'Fallen',a:'Burna Boy',b:80,dur:210},{t:'Monsters You Made',a:'Burna Boy',b:86,dur:210},
-      {t:'Secret',a:'Burna Boy',b:84,dur:210},{t:'Wonderful',a:'Burna Boy',b:90,dur:210},
-      {t:'Real Life',a:'Burna Boy',b:85,dur:210},{t:'Alone',a:'Burna Boy',b:84,dur:210},
-      {t:'Location',a:'Dave ft. Burna Boy',b:90,dur:210},{t:'Heart\'s on Fire',a:'Wizkid',b:84,dur:210},
-      {t:'Blessed',a:'Wizkid',b:82,dur:210},{t:'Come Closer',a:'Wizkid',b:88,dur:210},
-      {t:'One Dance',a:'Drake & Wizkid',b:104,dur:210},{t:'Sweetest Thing',a:'Wizkid',b:84,dur:210},
-      {t:'Running',a:'Davido',b:78,dur:210},{t:'If',a:'Davido',b:86,dur:210},
-      {t:'Assurance',a:'Davido',b:84,dur:210},{t:'For You',a:'Davido',b:80,dur:210},
-      {t:'Pesin',a:'Davido',b:82,dur:210},{t:'Risky',a:'Davido',b:88,dur:210},
-      {t:'Fans Mi',a:'Davido',b:84,dur:210},{t:'The Sound',a:'Davido',b:86,dur:210},
-    ],
-    'Bollywood':[
-      {t:'Tum Hi Ho',a:'Arijit Singh',b:65,dur:262},{t:'Channa Mereya',a:'Arijit Singh',b:76,dur:294},
-      {t:'Ae Dil Hai Mushkil',a:'Arijit Singh',b:70,dur:283},{t:'Teri Meri',a:'Shreya Ghoshal',b:68,dur:210},
-      {t:'Ik Vaari Aa',a:'Arijit Singh',b:66,dur:248},{t:'Fitoor',a:'Arijit Singh',b:74,dur:210},
-      {t:'Woh Lamhe',a:'Atif Aslam',b:72,dur:210},{t:'Aadat',a:'Atif Aslam',b:68,dur:210},
-      {t:'Pehli Nazar Mein',a:'Atif Aslam',b:74,dur:210},{t:'Tu Jane Na',a:'Atif Aslam',b:70,dur:210},
-      {t:'Jeena Jeena',a:'Atif Aslam',b:80,dur:210},{t:'O Saathi',a:'Atif Aslam',b:76,dur:210},
-      {t:'Dil Diyan Gallan',a:'Atif Aslam',b:78,dur:210},{t:'Pehla Nasha',a:'Udit Narayan',b:72,dur:210},
-      {t:'Aankhon Ki Gustakhiyan',a:'Udit Narayan',b:68,dur:210},{t:'Ye Dil Deewana',a:'Udit Narayan',b:76,dur:210},
-      {t:'Ek Ladki Ko Dekha',a:'A. R. Rahman',b:100,dur:210},{t:'Roja',a:'A. R. Rahman',b:72,dur:210},
-      {t:'Dil Se',a:'A. R. Rahman',b:80,dur:210},{t:'Chaiyya Chaiyya',a:'A. R. Rahman',b:120,dur:210},
-    ],
-    'Portuguese':[
-      {t:'Sozinho',a:'Caetano Veloso',b:80,dur:224},{t:'Terra',a:'Caetano Veloso',b:76,dur:210},
-      {t:'Você Não Me Ensinou a Te Esquecer',a:'Caetano Veloso',b:72,dur:210},{t:'Coração Vagabundo',a:'Caetano Veloso',b:80,dur:210},
-      {t:'Tempo Perdido',a:'Legião Urbana',b:104,dur:318},{t:'Monte Castelo',a:'Legião Urbana',b:112,dur:210},
-      {t:'Há Tempos',a:'Legião Urbana',b:100,dur:210},{t:'Índios',a:'Legião Urbana',b:108,dur:210},
-      {t:'Eduardo e Mônica',a:'Legião Urbana',b:126,dur:272},{t:'Pais e Filhos',a:'Legião Urbana',b:120,dur:210},
-      {t:'Saudade',a:'Seu Jorge',b:80,dur:210},{t:'Carolina',a:'Seu Jorge',b:88,dur:210},
-      {t:'Leãozinho',a:'Seu Jorge',b:92,dur:210},{t:'Tive Razão',a:'Seu Jorge',b:84,dur:210},
-      {t:'Pecado',a:'Caetano Veloso',b:72,dur:210},{t:'Sozinho',a:'Caetano Veloso',b:80,dur:224},
-      {t:'Garota de Ipanema',a:'João Gilberto',b:120,dur:162},{t:'Corcovado',a:'João Gilberto',b:90,dur:210},
-      {t:'Desafinado',a:'João Gilberto',b:100,dur:210},{t:'Insensatez',a:'João Gilberto',b:80,dur:210},
-    ],
-    'Turkish':[
-      {t:'Hayat Bazen Tatlı',a:'Teoman',b:90,dur:210},{t:'Roman Havası',a:'Teoman',b:96,dur:210},
-      {t:'Günaydın',a:'Sıla',b:96,dur:210},{t:'Olmadı',a:'Sıla',b:90,dur:210},
-      {t:'Anlamıyorum',a:'Sertab Erener',b:86,dur:210},{t:'Gitme',a:'Bengü',b:82,dur:210},
-      {t:'Kalbim Yoruldu',a:'Bengü',b:78,dur:210},{t:'Seninle Güzel',a:'Bengü',b:84,dur:210},
-      {t:'Ağlama',a:'Duman',b:88,dur:210},{t:'Belki',a:'Duman',b:100,dur:245},
-      {t:'Sarhoş',a:'Duman',b:112,dur:238},{t:'Can',a:'Duman',b:108,dur:210},
-      {t:'Gözlerin',a:'Duman',b:96,dur:210},{t:'Kalpten',a:'Duman',b:90,dur:210},
-      {t:'İki Dakika',a:'Duman',b:100,dur:210},{t:'Yüz Yıl',a:'Duman',b:94,dur:210},
-      {t:'Seni Bulmak',a:'Duman',b:92,dur:210},{t:'Çıkış Yok',a:'Duman',b:88,dur:210},
-      {t:'Aklım Karıştı',a:'Duman',b:86,dur:210},{t:'Binbir Gece',a:'Duman',b:80,dur:210},
-    ],
-    'German':[
-      {t:'Ohne Dich',a:'Rammstein',b:80,dur:271},{t:'Mutter',a:'Rammstein',b:96,dur:210},
-      {t:'Nebel',a:'Rammstein',b:72,dur:210},{t:'Seemann',a:'Rammstein',b:88,dur:210},
-      {t:'Klavier',a:'Rammstein',b:80,dur:210},{t:'Amour',a:'Rammstein',b:76,dur:210},
-      {t:'Haifisch',a:'Rammstein',b:88,dur:210},{t:'Frühling in Paris',a:'Rammstein',b:84,dur:210},
-      {t:'Wilder Wein',a:'Rammstein',b:88,dur:210},{t:'Los',a:'Rammstein',b:90,dur:210},
-      {t:'Vergib mir',a:'Rammstein',b:86,dur:210},{t:'Spring',a:'Rammstein',b:100,dur:210},
-      {t:'Hilf mir',a:'Rammstein',b:92,dur:210},{t:'Zeit',a:'Rammstein',b:84,dur:303},
-      {t:'Tattoo',a:'Rammstein',b:108,dur:210},{t:'Zick Zack',a:'Rammstein',b:120,dur:210},
-      {t:'Armee der Tristen',a:'Tokio Hotel',b:90,dur:210},{t:'Der letzte Tag',a:'Tokio Hotel',b:88,dur:210},
-      {t:'Rette mich',a:'Tokio Hotel',b:138,dur:210},{t:'Wir sterben niemals aus',a:'Tokio Hotel',b:126,dur:210},
-    ],
-    'Metal':[
-      {t:'Nothing Else Matters',a:'Metallica',b:74,dur:388},{t:'The Unforgiven',a:'Metallica',b:94,dur:388},
-      {t:'Fade to Black',a:'Metallica',b:112,dur:417},{t:'One',a:'Metallica',b:120,dur:446},
-      {t:'Orion',a:'Metallica',b:90,dur:210},{t:'The Day That Never Comes',a:'Metallica',b:80,dur:210},
-      {t:'The Outlaw Torn',a:'Metallica',b:80,dur:210},{t:'Low Man\'s Lyric',a:'Metallica',b:68,dur:210},
-      {t:'To Live Is to Die',a:'Metallica',b:72,dur:210},{t:'Fixxxer',a:'Metallica',b:80,dur:210},
-      {t:'Mama Said',a:'Metallica',b:76,dur:210},{t:'Until It Sleeps',a:'Metallica',b:84,dur:210},
-      {t:'Bleeding Me',a:'Metallica',b:90,dur:210},{t:'Hero of the Day',a:'Metallica',b:80,dur:210},
-      {t:'Loverman',a:'Metallica',b:76,dur:210},{t:'Outlaw Torn',a:'Metallica',b:80,dur:210},
-      {t:'Dreams',a:'Fleetwood Mac',b:120,dur:210},{t:'The Chain',a:'Fleetwood Mac',b:152,dur:210},
-      {t:'Go Your Own Way',a:'Fleetwood Mac',b:136,dur:210},{t:'Landslide',a:'Fleetwood Mac',b:89,dur:210},
-    ],
-  },
-};
+// =====================================================================
+// CONNECTION TO THE TRAINED MODELS (FastAPI backend, see app.py)
+// Songs are recommended, and moods are classified, by models trained on the Kaggle Spotify tracks dataset.
+// =====================================================================
+const API = location.protocol === 'file:' ? 'http://127.0.0.1:8000' : '';
+const OFFLINE_MSG = 'Cannot reach the model server. Start it with: uvicorn app:app --reload';
 
-// For moods not fully detailed, map to closest emotional neighbour
-DB.angry      = {};
-DB.stressed   = {};
-DB.studious   = {};
-DB.nostalgic  = {};
-DB.period     = {};
-DB.chill      = {};
-DB.romantic   = {};
-DB.energetic  = {};
-DB.melancholic= {};
-DB.confident  = {};
-
-// Fill using emotional mapping with shuffled versions so each mood feels distinct
-(function fillMoods(){
-  function clone(src){ return Object.fromEntries(Object.entries(src).map(([g,songs])=>[g,[...songs]])); }
-  DB.energetic  = clone(DB.happy);
-  DB.angry      = clone(DB.happy);
-  DB.confident  = clone(DB.happy);
-  DB.nostalgic  = clone(DB.happy);
-  DB.chill      = clone(DB.sad);
-  DB.stressed   = clone(DB.sad);
-  DB.melancholic= clone(DB.sad);
-  DB.period     = clone(DB.sad);
-  DB.studious   = clone(DB.sad);
-  DB.romantic   = clone(DB.sad);
-})();
+async function api(path, params, body) {
+  var url = API + path + (params ? '?' + new URLSearchParams(params).toString() : '');
+  var res = await fetch(url, body ? { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) } : undefined);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+function analyseTrack(payload) { return api('/api/analyze', null, payload); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+// text inside onclick="search('...')": escape for JS first, then for the HTML attribute
+function jsAttr(s) { return esc(String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")); }
 
 // =====================================================================
 // STATE
@@ -1159,17 +589,6 @@ function toast(m){const t=document.getElementById('toast');t.textContent=m;t.cla
 function showErr(m){const e=document.getElementById('auth-err');e.textContent=m;e.style.display='block';}
 function clearErr(){document.getElementById('auth-err').style.display='none';}
 function greet(){const h=new Date().getHours();return h<12?'Good morning':h<17?'Good afternoon':h<21?'Good evening':'Good night';}
-
-// Fresh pool pick — guarantees different songs on each shuffle
-function pickFresh(pool, key, n){
-  if(!shownKeys[key]) shownKeys[key]=new Set();
-  let unseen=pool.filter(s=>!shownKeys[key].has(s.t));
-  // If pool exhausted, reset
-  if(unseen.length<n){ shownKeys[key]=new Set(); unseen=shuf([...pool]); }
-  const picked=shuf(unseen).slice(0,n);
-  picked.forEach(s=>shownKeys[key].add(s.t));
-  return picked;
-}
 
 // =====================================================================
 // AUTH
@@ -1257,24 +676,18 @@ var BS=[
   'background:rgba(77,21,25,0.35);border:1px solid rgba(120,45,50,0.58);color:#e0b0b5;',
 ];
 
-function loadSongs(){
+async function loadSongs(){
   if(!mood||genres.length===0)return;
   var mObj=MOODS.find(function(m){return m.id===mood;});
-  var mDB=DB[mood];
-  // Per genre: pick 5 fresh songs (ensures variety across genres); total ~15
-  var perG=Math.ceil(15/genres.length);
-  var all=[];
-  genres.forEach(function(g){
-    var pool=mDB[g];
-    if(!pool){
-      var key=Object.keys(mDB).find(function(k){return k.toLowerCase().includes(g.toLowerCase().split('/')[0].trim());});
-      pool=key?mDB[key]:mDB[Object.keys(mDB)[0]];
-    }
-    var shownKey=mood+'::'+g;
-    var picked=pickFresh(pool,shownKey,perG);
-    picked.forEach(function(s){all.push(Object.assign({},s,{_g:g}));});
-  });
-  var songs=shuf(all).slice(0,15);
+  var shownKey=mood+'::'+genres.slice().sort().join('|');
+  if(!shownKeys[shownKey]) shownKeys[shownKey]=[];
+  var songs;
+  try {
+    var data=await api('/api/songs',{mood:mood,genres:genres.join(','),n:15,exclude:shownKeys[shownKey].slice(-250).join(',')});
+    songs=data.songs;
+  } catch(e) { toast(OFFLINE_MSG); return; }
+  if(!songs.length){ toast('No songs found for this mix - try other genres.'); return; }
+  songs.forEach(function(s){ shownKeys[shownKey].push(s.id); });
 
   document.getElementById('shd').innerHTML=mObj.icon+' <em>'+mObj.label+'</em> vibes';
   document.getElementById('ssub').textContent=songs.length+' tracks · shuffle for a fresh mix';
@@ -1286,11 +699,11 @@ function loadSongs(){
   document.getElementById('songs-list').innerHTML=songs.map(function(s,i){
     var gi=genres.indexOf(s._g);
     var bsi=gi>=0?gi:i%3;
-    var st=s.t.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    var sa=s.a.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    var st=jsAttr(s.t);
+    var sa=jsAttr(s.a);
     return '<div class="song-row" onclick="search(\''+st+'\',\''+sa+'\')">'
       +'<div><span class="song-num">'+String(i+1).padStart(2,'0')+'</span><span class="play-icon">&#9654;</span></div>'
-      +'<div class="song-info"><div class="song-title">'+s.t+'</div><div class="song-artist">'+s.a+'</div></div>'
+      +'<div class="song-info"><div class="song-title">'+esc(s.t)+'</div><div class="song-artist">'+esc(s.a)+'</div></div>'
       +'<div class="song-right">'
       +'<span class="song-genre" style="'+BS[bsi%3]+'">'+s._g+'</span>'
       +'<span class="song-bpm">'+s.b+' bpm</span>'
@@ -1638,164 +1051,52 @@ function spAnalyse(tr) {
 }
 
 function spInferMood(tr, genres, artists, art) {
-  var name     = (tr.name || '').toLowerCase();
-  var genreStr = (genres || []).join(' ').toLowerCase();
-  var explicit = tr.explicit || false;
-  var pop      = tr.popularity || 50;
-  var durMs    = tr.duration_ms || 210000;
-  var durMin   = durMs / 60000;
+  var durMs = tr.duration_ms || 210000;
+  analyseTrack({ name: tr.name || '', artists: artists, genres: genres || [], explicit: !!tr.explicit,
+                 popularity: tr.popularity || 50, duration_ms: durMs })
+  .then(function(res) {
+    // the song is in the training data: we know its real audio features
+    if (res.source === 'dataset') { renderAnalysis(res.features, tr.name, artists, art, res); return; }
 
-  // Keyword patterns
-  var sadRx   = /\b(sad|cry|tears|heartbreak|alone|miss|lost|hurt|pain|broken|goodbye|sorry|lonely|died|mourn)\b/;
-  var angryRx = /\b(angry|rage|hate|kill|war|fight|burn|destroy|scream|violent|revenge|blood)\b/;
-  var happyRx = /\b(happy|joy|smile|sunshine|fun|dance|party|celebrate|best|win|bright|summer)\b/;
-  var chillRx = /\b(chill|relax|calm|peace|sleep|dream|smooth|mellow|ease|rest|slow|lofi)\b/;
-  var loveRx  = /\b(love|heart|kiss|darling|baby|honey|forever|together|tender|rose|romantic)\b/;
-  var hypeRx  = /\b(run|power|fast|pump|hype|rush|alive|strong|ignite|electric|go|fire)\b/;
-  var boldRx  = /\b(king|queen|boss|flex|rich|champion|iconic|slay|drip|goat)\b/;
-
-  // Genre flags
-  var isMetal  = /metal|death|thrash|heavy|hardcore/.test(genreStr);
-  var isRock   = /rock|punk|grunge|alternative/.test(genreStr);
-  var isClassic= /classical|orchestra|piano|chamber|symphony|baroque|opera/.test(genreStr);
-  var isJazz   = /jazz/.test(genreStr);
-  var isElec   = /electronic|edm|house|techno|trance|dance/.test(genreStr);
-  var isPop    = /pop/.test(genreStr);
-  var isIndie  = /indie|folk|singer.?song|bedroom|acoustic/.test(genreStr);
-  var isRnb    = /r.n.b|soul|rhythm|neo.soul/.test(genreStr);
-  var isHipHop = /hip.?hop|rap|trap|drill/.test(genreStr);
-  var isAfro   = /afro|afrobeats|afropop/.test(genreStr);
-  var isLatin  = /latin|reggaeton|salsa|cumbia/.test(genreStr);
-
-  var mood, conf, desc;
-
-  // Combined logic: genre + keywords + explicit + popularity together
-  if (isMetal && angryRx.test(name))        { mood='angry';      conf=82; desc='Heavy and furious \u2014 a head-banger.'; }
-  else if (isMetal)                          { mood='angry';      conf=74; desc='Aggressive and intense \u2014 a metal track.'; }
-  else if (angryRx.test(name))              { mood='angry';      conf=68; desc='The title signals raw aggression.'; }
-  else if (sadRx.test(name) && isIndie)     { mood='melancholic';conf=73; desc='Indie introspection with a melancholic edge.'; }
-  else if (sadRx.test(name))                { mood='sad';        conf=74; desc='The title hints at heartache and sorrow.'; }
-  else if (isClassic && durMin > 6)         { mood='studious';   conf=76; desc='A long classical piece \u2014 perfect for focus.'; }
-  else if (isClassic)                       { mood='chill';      conf=70; desc='Refined and mellow \u2014 ideal for winding down.'; }
-  else if ((isAfro || isLatin) && hypeRx.test(name)) { mood='energetic'; conf=76; desc='High-energy and rhythmic \u2014 made to move.'; }
-  else if (isAfro || isLatin)               { mood='energetic';  conf=72; desc='Rhythmic and uplifting \u2014 feel-good energy.'; }
-  else if (isElec && pop > 65)              { mood='energetic';  conf=70; desc='Driving electronic energy.'; }
-  else if (hypeRx.test(name) || (isRock && !sadRx.test(name))) { mood='energetic'; conf=68; desc='High energy and powerful.'; }
-  else if (boldRx.test(name) || (isHipHop && explicit && pop > 75)) { mood='confident'; conf=72; desc='Bold and assertive \u2014 a power anthem.'; }
-  else if (happyRx.test(name) && !explicit) { mood='happy';     conf=70; desc='Bright and uplifting \u2014 genuinely joyful.'; }
-  else if (loveRx.test(name) && !explicit && (isRnb || isPop)) { mood='romantic'; conf=71; desc='Warm and tender \u2014 made for close moments.'; }
-  else if (chillRx.test(name) || isJazz)   { mood='chill';      conf=70; desc='Laid-back and smooth \u2014 perfect for unwinding.'; }
-  else if (isPop && pop > 72 && !explicit)  { mood='happy';      conf=65; desc='Popular and bright \u2014 carries positive energy.'; }
-  else if (isRnb && durMin > 3)             { mood='romantic';   conf=64; desc='Smooth and soulful \u2014 made for close moments.'; }
-  else if (isHipHop && explicit)            { mood='confident';  conf=65; desc='Bold and assertive \u2014 a statement track.'; }
-  else if (isIndie)                         { mood='nostalgic';  conf=62; desc='Warm and reflective \u2014 indie soul.'; }
-  else                                      { mood='chill';      conf=57; desc='Smooth and easy \u2014 a relaxed listen.'; }
-
-  var mObj = MOODS.find(function(m){ return m.id === mood; });
-
-  // Approximate feature values from mood for visual bars
-  var vMap = {happy:0.78,sad:0.22,angry:0.20,stressed:0.35,studious:0.45,nostalgic:0.50,period:0.40,chill:0.58,romantic:0.68,energetic:0.62,melancholic:0.18,confident:0.72};
-  var eMap = {happy:0.72,sad:0.28,angry:0.85,stressed:0.78,studious:0.30,nostalgic:0.32,period:0.28,chill:0.32,romantic:0.38,energetic:0.84,melancholic:0.24,confident:0.74};
-  var dMap = {happy:0.72,sad:0.30,angry:0.42,stressed:0.45,studious:0.28,nostalgic:0.42,period:0.30,chill:0.55,romantic:0.60,energetic:0.80,melancholic:0.26,confident:0.78};
-  var aMap = {happy:0.10,sad:0.45,angry:0.04,stressed:0.06,studious:0.70,nostalgic:0.65,period:0.48,chill:0.35,romantic:0.40,energetic:0.06,melancholic:0.52,confident:0.05};
-  var iMap = {happy:0.01,sad:0.02,angry:0.03,stressed:0.02,studious:0.75,nostalgic:0.12,period:0.05,chill:0.08,romantic:0.04,energetic:0.02,melancholic:0.10,confident:0.01};
-
-  var bar = function(val, cls) {
-    return '<div class="feat-track"><div class="feat-fill ' + cls + '" style="width:' + Math.round(val*100) + '%"></div></div>';
-  };
-  var v2=vMap[mood]||0.5, e2=eMap[mood]||0.5, d2=dMap[mood]||0.5, a2=aMap[mood]||0.2, i2=iMap[mood]||0.02;
-  var html =
-    '<div class="analysis-card">'
-    + '<div class="analysis-header"><div class="analysis-track">'
-    + '<div class="analysis-title">' + spEsc(tr.name || '') + '</div>'
-    + '<div class="analysis-artist">' + spEsc(artists) + '</div>'
-    + '</div></div>'
-    + '<div class="analysis-body">'
-    + '<div style="font-size:.72rem;color:var(--text-m);margin-bottom:.8rem;padding:.45rem .8rem;background:rgba(89,72,54,0.15);border-radius:8px;border:1px solid rgba(89,72,54,0.3);">'
-    + 'Mood inferred from genre &amp; title signals'
-    + '</div>'
-    + '<div class="mood-result">'
-    + '<div class="mood-result-icon">' + (mObj ? mObj.icon : '') + '</div>'
-    + '<div class="mood-result-text">'
-    + '<h3>' + (mObj ? mObj.label : 'Unknown') + ' <span style="font-family:DM Sans;font-size:.8rem;color:var(--text-m);font-weight:400">' + Math.min(conf,99) + '% match</span></h3>'
-    + '<p>' + desc + '</p>'
-    + '</div></div>'
-    + '<div class="features-grid">'
-    + '<div class="feat-bar-wrap"><div class="feat-label"><span class="feat-name">Valence</span><span class="feat-val">'       + Math.round(v2*100) + '%</span></div>' + bar(v2,'f-val') + '</div>'
-    + '<div class="feat-bar-wrap"><div class="feat-label"><span class="feat-name">Energy</span><span class="feat-val">'        + Math.round(e2*100) + '%</span></div>' + bar(e2,'f-ene') + '</div>'
-    + '<div class="feat-bar-wrap"><div class="feat-label"><span class="feat-name">Danceability</span><span class="feat-val">' + Math.round(d2*100) + '%</span></div>' + bar(d2,'f-dan') + '</div>'
-    + '<div class="feat-bar-wrap"><div class="feat-label"><span class="feat-name">Acousticness</span><span class="feat-val">' + Math.round(a2*100) + '%</span></div>' + bar(a2,'f-val') + '</div>'
-    + '<div class="feat-bar-wrap" style="grid-column:1/-1"><div class="feat-label"><span class="feat-name">Instrumentalness</span><span class="feat-val">' + Math.round(i2*100) + '%</span></div>' + bar(i2,'f-ins') + '</div>'
-    + '</div>'
-    + '<div class="feat-raw">'
-    + '<span class="feat-pill">Duration: ' + Math.floor(durMs/60000) + ':' + String(Math.round((durMs%60000)/1000)).padStart(2,'0') + '</span>'
-    + '</div>'
-    + '</div></div>';
-  document.getElementById('az-output').innerHTML = html;
-}
-
-// ── Mood classification (Russell's circumplex model + Kaggle audio features) ──
-const MOODS_LIST = ['happy','sad','angry','stressed','studious','nostalgic','period','chill','romantic','energetic','melancholic','confident'];
-
-function classifyMood(f) {
-  // Combined multi-feature logic — uses valence + energy + danceability together
-  // Single-feature checks caused wrong results (e.g. high-v → Happy even for dark songs)
-  var v=f.valence, e=f.energy, t=f.tempo, d=f.danceability;
-  var ins=f.instrumentalness, ac=f.acousticness, mode=f.mode, loud=f.loudness||0;
-
-  // Studious: instrumental, low energy, slow
-  if(ins>0.5&&e<0.5&&t<110)
-    return{mood:'studious',conf:Math.round((ins*.5+(1-e)*.3+(1-Math.min(t/110,1))*.2)*100)};
-
-  // Melancholic: very low valence + low energy + minor
-  if(v<0.25&&e<0.4&&mode===0)
-    return{mood:'melancholic',conf:Math.round(((1-v)*.5+(1-e)*.3+.2)*100)};
-
-  // Sad: low valence + low-mid energy (before nostalgic so acousticness doesn't override)
-  if(v<0.35&&e<0.5)
-    return{mood:'sad',conf:Math.round(((1-v)*.55+(1-e)*.45)*100)};
-
-  // Angry: low valence + high energy + loud (e.g. metal, rage rap)
-  if(v<0.4&&e>0.7&&loud>-8)
-    return{mood:'angry',conf:Math.round(((1-v)*.4+e*.4+(1-Math.abs(loud+4)/10)*.2)*100)};
-
-  // Stressed: low-mid valence + high energy + fast (anxious feel)
-  if(v<0.45&&e>0.65&&t>125)
-    return{mood:'stressed',conf:Math.round(((1-v)*.35+e*.35+Math.min(t/180,1)*.3)*100)};
-
-  // Energetic: high energy + mid-high valence + high danceability (Waka Waka, upbeat bangers)
-  if(e>0.65&&v>0.45&&d>0.6)
-    return{mood:'energetic',conf:Math.round((e*.4+v*.3+d*.3)*100)};
-
-  // Confident: high valence + high danceability (bold/groovy, even if energy is mid)
-  if(v>0.6&&d>0.65&&e>0.5)
-    return{mood:'confident',conf:Math.round((v*.35+d*.35+e*.3)*100)};
-
-  // Happy: high valence + decent energy together (genuinely uplifting)
-  if(v>0.65&&e>0.55)
-    return{mood:'happy',conf:Math.round((v*.5+e*.3+d*.2)*100)};
-
-  // Romantic: positive valence + low energy + danceable + acoustic (slow dance feel)
-  if(v>0.5&&e<0.5&&d>0.45&&ac>0.2)
-    return{mood:'romantic',conf:Math.round((v*.3+(1-e)*.25+d*.25+ac*.2)*100)};
-
-  // Nostalgic: acoustic + slow + mid valence (warm, reflective)
-  if(ac>0.5&&t<120&&v>0.2&&v<0.75)
-    return{mood:'nostalgic',conf:Math.round((ac*.4+(1-Math.abs(v-.45))*.3+(1-Math.min(t/120,1))*.3)*100)};
-
-  // Period / Tender: low-mid valence + low energy + some acousticness
-  if(v<0.5&&e<0.45&&ac>0.3)
-    return{mood:'period',conf:Math.round(((1-v)*.35+(1-e)*.35+ac*.3)*100)};
-
-  // Chill: positive but low energy (last resort for calm songs)
-  if(e<0.5&&v>0.35)
-    return{mood:'chill',conf:Math.round((v*.4+(1-e)*.35+(1-Math.abs(d-.55))*.25)*100)};
-
-  // Energetic fallback (high energy songs that didn't match above)
-  if(e>0.65)
-    return{mood:'energetic',conf:Math.round((e*.6+v*.2+d*.2)*100)};
-
-  return{mood:'chill',conf:Math.round((v*.4+(1-e)*.3+d*.3)*100)};
+    var mood = res.mood, conf = res.conf;
+    var mObj = MOODS.find(function(m){ return m.id === mood; });
+    var v2 = res.features.valence, e2 = res.features.energy, d2 = res.features.danceability,
+        a2 = res.features.acousticness, i2 = res.features.instrumentalness;
+    var bar = function(val, cls) {
+      return '<div class="feat-track"><div class="feat-fill ' + cls + '" style="width:' + Math.round(val*100) + '%"></div></div>';
+    };
+    var html =
+      '<div class="analysis-card">'
+      + '<div class="analysis-header"><div class="analysis-track">'
+      + '<div class="analysis-title">' + spEsc(tr.name || '') + '</div>'
+      + '<div class="analysis-artist">' + spEsc(artists) + '</div>'
+      + '</div></div>'
+      + '<div class="analysis-body">'
+      + '<div style="font-size:.72rem;color:var(--text-m);margin-bottom:.8rem;padding:.45rem .8rem;background:rgba(89,72,54,0.15);border-radius:8px;border:1px solid rgba(89,72,54,0.3);">'
+      + 'Mood inferred from genre &amp; title signals'
+      + '</div>'
+      + '<div class="mood-result">'
+      + '<div class="mood-result-icon">' + (mObj ? mObj.icon : '') + '</div>'
+      + '<div class="mood-result-text">'
+      + '<h3>' + (mObj ? mObj.label : 'Unknown') + ' <span style="font-family:DM Sans;font-size:.8rem;color:var(--text-m);font-weight:400">' + Math.min(conf,99) + '% match</span></h3>'
+      + '<p>' + (MOOD_DESC[mood] || '') + '</p>'
+      + '</div></div>'
+      + '<div class="features-grid">'
+      + '<div class="feat-bar-wrap"><div class="feat-label"><span class="feat-name">Valence</span><span class="feat-val">'       + Math.round(v2*100) + '%</span></div>' + bar(v2,'f-val') + '</div>'
+      + '<div class="feat-bar-wrap"><div class="feat-label"><span class="feat-name">Energy</span><span class="feat-val">'        + Math.round(e2*100) + '%</span></div>' + bar(e2,'f-ene') + '</div>'
+      + '<div class="feat-bar-wrap"><div class="feat-label"><span class="feat-name">Danceability</span><span class="feat-val">' + Math.round(d2*100) + '%</span></div>' + bar(d2,'f-dan') + '</div>'
+      + '<div class="feat-bar-wrap"><div class="feat-label"><span class="feat-name">Acousticness</span><span class="feat-val">' + Math.round(a2*100) + '%</span></div>' + bar(a2,'f-val') + '</div>'
+      + '<div class="feat-bar-wrap" style="grid-column:1/-1"><div class="feat-label"><span class="feat-name">Instrumentalness</span><span class="feat-val">' + Math.round(i2*100) + '%</span></div>' + bar(i2,'f-ins') + '</div>'
+      + '</div>'
+      + '<div class="feat-raw">'
+      + '<span class="feat-pill">Duration: ' + Math.floor(durMs/60000) + ':' + String(Math.round((durMs%60000)/1000)).padStart(2,'0') + '</span>'
+      + '</div>'
+      + '</div></div>';
+    document.getElementById('az-output').innerHTML = html;
+  })
+  .catch(function() {
+    document.getElementById('az-output').innerHTML = '<div class="no-creds">' + OFFLINE_MSG + '</div>';
+  });
 }
 
 var MOOD_DESC = {
@@ -1813,8 +1114,14 @@ var MOOD_DESC = {
   confident:  'Bold, groovy, and self-assured \u2014 a power anthem.',
 };
 
-function renderAnalysis(f, name, artist, artUrl) {
-  var result = classifyMood(f);
+async function renderAnalysis(f, name, artist, artUrl, pre) {
+  var result;
+  try {
+    result = pre || await analyseTrack({ features: f, name: name, artists: artist });
+  } catch (e) {
+    document.getElementById('az-output').innerHTML = '<div class="no-creds">' + OFFLINE_MSG + '</div>';
+    return;
+  }
   var mObj = MOODS.find(function(m){ return m.id === result.mood; });
   var pct  = Math.min(result.conf, 99);
   var bar  = function(val, cls) {
@@ -1824,8 +1131,8 @@ function renderAnalysis(f, name, artist, artUrl) {
     '<div class="analysis-card">'
     + '<div class="analysis-header">'
     + '<div class="analysis-track">'
-    + '<div class="analysis-title">' + name   + '</div>'
-    + '<div class="analysis-artist">' + artist + '</div>'
+    + '<div class="analysis-title">' + spEsc(name)   + '</div>'
+    + '<div class="analysis-artist">' + spEsc(artist) + '</div>'
     + '</div></div>'
     + '<div class="analysis-body">'
     + '<div class="mood-result">'

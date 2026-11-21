@@ -1,0 +1,8 @@
+# big / generated files - do NOT push these
+models/
+data/
+venv/
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
